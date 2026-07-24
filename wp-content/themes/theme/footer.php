@@ -3,7 +3,7 @@
     ============================================================ -->
     <style>
         /* =============================================
-           FOOTER – FONDS VERT TOGO
+           FOOTER – Togo Green Fund TOGO
            ============================================= */
         .main-footer {
             --ft-green:       #0a6e3e;
@@ -306,7 +306,7 @@
 
                             <!-- Description courte -->
                             <p class="footer-widget__text">
-                                <?php _e( 'Le Fonds Vert Togo mobilise des financements pour des projets climatiques et de développement durable au Togo.', 'alefox' ); ?>
+                                <?php _e( 'Le Togo Green Fund Togo mobilise des financements pour des projets climatiques et de développement durable au Togo.', 'alefox' ); ?>
                             </p>
 
                             <!-- Coordonnées -->
@@ -321,11 +321,11 @@
                                 </li>
                                 <li>
                                     <span class="footer-widget__info__icon"><i class="icofont-phone"></i></span>
-                                    <a href="tel:+228XXXXXXXX">+228 XX XX XX XX</a>
+                                    <a href="tel:+22820223040">+228 20 22 30 40</a>
                                 </li>
                                 <li>
                                     <span class="footer-widget__info__icon"><i class="icofont-email"></i></span>
-                                    <a href="mailto:denv_togo@yahoo.fr">denv_togo@yahoo.fr</a>
+                                    <a href="mailto:contact@togogreenfund.tg">contact@togogreenfund.tg</a>
                                 </li>
                             </ul>
 
@@ -441,8 +441,8 @@
             ) );
             ?>
             <ul class="mobile-nav__contact list-unstyled">
-                <li><i class="fa fa-envelope"></i> <a href="mailto:denv_togo@yahoo.fr">denv_togo@yahoo.fr</a></li>
-                <li><i class="fa fa-phone-alt"></i> <a href="tel:+228XXXXXXXX">+228 XX XX XX XX</a></li>
+                <li><i class="fa fa-envelope"></i> <a href="mailto:contact@togogreenfund.tg">contact@togogreenfund.tg</a></li>
+                <li><i class="fa fa-phone-alt"></i> <a href="tel:+228 22203040">+228 22 20 30 40</a></li>
             </ul>
             <div class="mobile-nav__social">
                 <a href="https://facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -478,7 +478,7 @@
                 </a>
             </div>
             <p class="sidebar-one__text">
-                <?php _e( 'Le Fonds Vert Togo accompagne les projets durables pour la lutte contre le changement climatique.', 'alefox' ); ?>
+                <?php _e( 'Le Togo Green Fund Togo accompagne les projets durables pour la lutte contre le changement climatique.', 'alefox' ); ?>
             </p>
             <h4 class="sidebar-one__title"><?php _e( 'Contact', 'alefox' ); ?></h4>
             <ul class="sidebar-one__info">

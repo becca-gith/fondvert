@@ -3,13 +3,13 @@
  * Template part : Mot du Directeur (page d'accueil / page Gouvernance)
  * Togo Green Fund du Togo
  *
- * @package FondsVertTogo
+ * @package Togo Green Fund
  */
 
 // Données statiques (remplaçables par ACF ultérieurement)
-$director_image     = FVT_THEME_URI . '/assets/images/resources/about-3-1.jpg'; // portrait du directeur
-$director_shape     = FVT_THEME_URI . '/assets/images/resources/about-3-shape-1.png';
-$director_signature = FVT_THEME_URI . '/assets/images/shapes/about-3-brand.png'; // remplacer par une image de signature scannée si disponible
+$director_image     = FVT_THEME_URI . '/assets/images/resources/about-4-1.jpg'; // portrait du directeur
+//$director_shape     = FVT_THEME_URI . '/assets/images/resources/about-3-shape-1.png';
+//$director_signature = FVT_THEME_URI . '/assets/images/shapes/about-3-brand.png'; // remplacer par une image de signature scannée si disponible
 
 $director_title   = __( 'Un engagement sincère<br>pour un Togo résil<span>i</span>ent', 'alefox' );
 $director_message = __( 'Le Togo Green Fund du Togo est né d\'une conviction : celle qu\'un développement durable et inclusif est possible pour notre pays. Chaque jour, notre équipe travaille aux côtés des communautés, des porteurs de projets et de nos partenaires pour transformer cette conviction en résultats concrets sur le terrain.', 'alefox' );
@@ -252,10 +252,10 @@ $director_btn_url  = function_exists( 'fvt_page_url' ) ? fvt_page_url( 'gouverna
 			<div class="col-lg-5">
 				<div class="director-msg__image wow fadeInLeft" data-wow-delay="200ms">
 					<img src="<?php echo esc_url( $director_image ); ?>" alt="<?php echo esc_attr( $director_name ); ?>">
-					<div class="director-msg__image__badge">
+					<!-- <div class="director-msg__image__badge">
 						<img src="<?php echo esc_url( $director_signature ); ?>" alt="<?php esc_attr_e( 'Signature', 'alefox' ); ?>">
 						<span><?php esc_html_e( 'Togo Green Fund Togo', 'alefox' ); ?></span>
-					</div>
+					</div> -->
 				</div>
 			</div>
 

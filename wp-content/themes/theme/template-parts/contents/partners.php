@@ -8,9 +8,14 @@
 
 // Liste statique des partenaires (remplacez par vos propres logos)
 $partners = array(
+	
 	array(
-		'name' => 'PNUD Togo',
-		'logo' => 'pnud.png',
+		'name' => 'Ministère de l\'Environnement',
+		'logo' => 'logomerf.png',
+	),
+	array(
+		'name' => 'Green fund Togo',
+		'logo' => 'fvc.webp',
 	),
 	array(
 		'name' => 'Banque Mondiale',
@@ -18,27 +23,24 @@ $partners = array(
 	),
 	array(
 		'name' => 'Union Européenne',
-		'logo' => 'ue.png',
+		'logo' => 'ue.webp',
 	),
 	array(
 		'name' => 'GIZ Togo',
-		'logo' => 'giz.png',
+		'logo' => 'giz.jpg',
 	),
 	array(
-		'name' => 'AFD',
-		'logo' => 'afd.png',
+		'name' => 'GIZ2',
+		'logo' => 'giz2.webp',
+	),
+	
+	array(
+		'name' => 'GEF',
+		'logo' => 'gef.jpg',
 	),
 	array(
-		'name' => 'Ministère de l\'Environnement',
-		'logo' => 'environnement.png',
-	),
-	array(
-		'name' => 'ANDE',
-		'logo' => 'ande.png',
-	),
-	array(
-		'name' => 'UNFCCC',
-		'logo' => 'unfccc.png',
+		'name' => 'PNUD',
+		'logo' => 'pnud.jpg',
 	),
 );
 ?>

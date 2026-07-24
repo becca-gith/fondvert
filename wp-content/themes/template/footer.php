@@ -42,7 +42,7 @@
 
     <!-- Bottom bar : copyright + mentions -->
     <div class="footer-bottom">
-      <p>© <?php echo date('Y'); ?> Association Togolaise des Consommateurs – Tous droits réservés.</p>
+      <p>© <?php echo date('Y'); ?> togo green fund – Tous droits réservés.</p>
       <div class="legal">
       
         <a href="#" id="backToTopFooter"><i class="fas fa-arrow-up"></i> Haut de page</a>

@@ -8,23 +8,23 @@
 
 $news_items = array(
 	array(
-		'image' => 'service-3-1.jpg',
+		'image' => 'service-3-7.avif',
 		'icon'  => 'icon-leaf',
-		'date'  => '15 juin 2025',
+		'date'  => '16 juin 2025',
 		'title' => __( 'Lancement du Togo Green Fund du Togo', 'alefox' ),
 		'excerpt' => __( 'Le Togo Green Fund du Togo a été officiellement lancé pour mobiliser des financements climatiques.', 'alefox' ),
 		'link'  => '#',
 	),
+	//array(
+		//'image' => 'service-3-2.jpg',
+		//'icon'  => 'icon-sustainability',
+		//'date'  => '28 mai 2025',
+		//'title' => __( 'Appel à projets pour l\'agriculture durable', 'alefox' ),
+		//'excerpt' => __( 'Un appel à projets est ouvert pour soutenir des initiatives agricoles résilientes au climat.', 'alefox' ),
+		//'link'  => '#',
+	//),
 	array(
-		'image' => 'service-3-2.jpg',
-		'icon'  => 'icon-sustainability',
-		'date'  => '28 mai 2025',
-		'title' => __( 'Appel à projets pour l\'agriculture durable', 'alefox' ),
-		'excerpt' => __( 'Un appel à projets est ouvert pour soutenir des initiatives agricoles résilientes au climat.', 'alefox' ),
-		'link'  => '#',
-	),
-	array(
-		'image' => 'service-3-3.jpg',
+		'image' => 'service-3-8.jpeg',
 		'icon'  => 'icon-management',
 		'date'  => '10 avril 2025',
 		'title' => __( 'Atelier de formation sur la gouvernance climatique', 'alefox' ),
@@ -32,7 +32,7 @@ $news_items = array(
 		'link'  => '#',
 	),
 	array(
-		'image' => 'service-3-1.jpg',
+		'image' => 'service-3-9.webp',
 		'icon'  => 'icon-agronomy',
 		'date'  => '22 mars 2025',
 		'title' => __( 'Projet de reboisement communautaire', 'alefox' ),
@@ -40,7 +40,7 @@ $news_items = array(
 		'link'  => '#',
 	),
 	array(
-		'image' => 'service-3-2.jpg',
+		'image' => 'service-3-10.jpg',
 		'icon'  => 'icon-energy',
 		'date'  => '5 février 2025',
 		'title' => __( 'Énergie solaire pour les zones rurales', 'alefox' ),
@@ -48,7 +48,7 @@ $news_items = array(
 		'link'  => '#',
 	),
 	array(
-		'image' => 'service-3-3.jpg',
+		'image' => 'service-3-11.webp',
 		'icon'  => 'icon-diploma',
 		'date'  => '18 janvier 2025',
 		'title' => __( 'Rapport d\'activité 2024 disponible', 'alefox' ),

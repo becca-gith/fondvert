@@ -626,16 +626,16 @@
         <div class="container">
             <div class="topbar-two__inner">
                 <div class="fvt-topbar__contacts">
-                    <a href="tel:+228XXXXXXXX"><i class="fas fa-phone-alt"></i>+228 XX XX XX XX</a>
+                    <a href="tel:+22820223040"><i class="fas fa-phone-alt"></i>+228 20 22 30 40</a>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
                     <a href="mailto:contact@togogreenfund.tg" class="fvt-hide-mobile"><i class="fas fa-envelope"></i>contact@togogreenfund.tg</a>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
                     <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"></i>Lomé, Togo</span>
                 </div>
                 <div class="fvt-topbar__right">
-                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
+                   <!-- <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
                         <i class="fas fa-file-signature"></i> Soumettre un projet
-                    </a>
+                    </a> -->
                     <div class="fvt-topbar__social">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                      
@@ -680,45 +680,45 @@
                     </li>
 
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'opportunite' ) ); ?>">Opportunité</a>
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'opportunite' ) ); ?>">Opportunités</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projets' ) ); ?>">Projet</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projets' ) ); ?>">Projets</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>">Soumettre un projet</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'manifester' ) ); ?>">Manifestation d'intérêt</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet' ) ); ?>">Guichet</a>
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet' ) ); ?>">Guichets</a>
                         <ul class="sub-menu">
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'agriculture-durable' ) ); ?>">Agriculture Durable</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'foret-et-biodiversite' ) ); ?>">Forêt et Biodiversité</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'eau-et-assainissement' ) ); ?>">Eau et Assainissement</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructure Durable</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructures Durables</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-realise' ) ); ?>">Projet</a>
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-realise' ) ); ?>">Projets</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grand-projet-realise' ) ); ?>">Grand Projet réalisé</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-approuve' ) ); ?>">Projet Approuvé</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grand-projet-realise' ) ); ?>">Grands Projets réalisés</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-approuve' ) ); ?>">Projets Approuvés</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ); ?>">Actualité</a>
+                        <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ); ?>">Actualités</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'communique-officiel' ) ); ?>">Communiqué Officiel</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'communique-officiel' ) ); ?>">Communiqués Officiels</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'infos' ) ); ?>">Infos</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'evenement' ) ); ?>">Évènement</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'evenement' ) ); ?>">Évènements</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'ressources' ) ); ?>">Ressources</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'documents' ) ); ?>">Document</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'documents' ) ); ?>">Documents</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'mediatheque' ) ); ?>">Médiathèque</a></li>
                         </ul>
                     </li>

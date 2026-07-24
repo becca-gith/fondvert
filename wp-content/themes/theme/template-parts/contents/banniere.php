@@ -23,7 +23,7 @@ if ( ! function_exists( 'fvt_page_url' ) ) {
 // ("Diapositives d'accueil") pour que ce soit modifiable depuis l'admin.
 $fvt_slides = array(
 	array(
-		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-3-1.jpg',
+		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-4-1.jpg',
 		'subtitle' => __( 'Financer la résilience climatique', 'alefox' ),
 		'title'    => __( 'Un Togo Green Fund au service<br>d\'un Togo dur<span>a</span>ble', 'alefox' ),
 		'text'     => __( 'Le Togo Green Fund du Togo mobilise et canalise des financements climatiques<br>pour soutenir des projets à fort impact environnemental et social.', 'alefox' ),
@@ -37,7 +37,7 @@ $fvt_slides = array(
 		),
 	),
 	array(
-		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-3-2.jpg',
+		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-4-3.jpg',
 		'subtitle' => __( 'Agir pour les communautés togolaises', 'alefox' ),
 		'title'    => __( 'Des projets verts, des<br>emplois et une éco<span>n</span>omie durable', 'alefox' ),
 		'text'     => __( 'De l\'agriculture résiliente à l\'énergie propre, nous accompagnons<br>les porteurs de projets qui construisent le Togo de demain.', 'alefox' ),
@@ -51,7 +51,7 @@ $fvt_slides = array(
 		),
 	),
 	array(
-		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-3-3.jpg',
+		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-4-2-1.jpg',
 		'subtitle' => __( 'Transparence et gouvernance', 'alefox' ),
 		'title'    => __( 'Ensemble pour un<br>avenir clima<span>t</span>ique sûr', 'alefox' ),
 		'text'     => __( 'Découvrez notre gouvernance, nos mécanismes de financement<br>et nos rapports d\'activité en toute transparence.', 'alefox' ),
