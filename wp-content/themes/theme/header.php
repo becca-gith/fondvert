@@ -49,8 +49,8 @@
             --fvt-white:       #ffffff;
             --fvt-shadow:      0 4px 24px rgba(6, 61, 36, 0.10);
             --fvt-shadow-lg:   0 20px 45px rgba(6, 61, 36, 0.16);
-            --fvt-font-body:   'Playfair Display', sans-serif;
-            --fvt-font-title:  'Playfair Display', serif;
+            --fvt-font-body:   'Roboto', sans-serif;
+            --fvt-font-title:  'Roboto', serif;
         }
 
         /* Utilitaire pour les grands titres de section */
@@ -68,7 +68,7 @@
         h1, h2, h3, h4, h5, h6,
         p, a, span, li, ul, div,
         .main-menu__list, .fvt-mobile-nav, .topbar-two, .fvt-cta-btn {
-            font-family: 'Playfair Display', sans-serif !important;
+            font-family: 'Roboto', sans-serif !important; /* Police de toute la page 
             color: var(--fvt-text);
         }
         body { font-weight: 400; }
@@ -622,20 +622,25 @@
     <div class="fvt-flag-strip"><span></span><span></span><span></span></div>
 
     <!-- Topbar -->
-    <div class="topbar-two">
+    <div class="topbar-two"> 
         <div class="container">
             <div class="topbar-two__inner">
                 <div class="fvt-topbar__contacts">
-                    <a href="tel:+22820223040"><i class="fas fa-phone-alt"></i>+228 20 22 30 40</a>
+                    <a href="tel:+22820223040"><i class="fas fa-phone-alt"><strong></i>+228 20 22 30 40</a></strong>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
-                    <a href="mailto:contact@togogreenfund.tg" class="fvt-hide-mobile"><i class="fas fa-envelope"></i>contact@togogreenfund.tg</a>
+                    <a href="mailto:contact@togogreenfund.tg" class="fvt-hide-mobile"><i class="fas fa-envelope"></i><strong>contact@togogreenfund.tg</strong></a>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
-                    <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"></i>Lomé, Togo</span>
+                    <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"><strong></i>Lomé, Togo</strong></span>
                 </div>
                 <div class="fvt-topbar__right">
-                   <!-- <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
-                        <i class="fas fa-file-signature"></i> Soumettre un projet
-                    </a> -->
+                
+                    <!--Plainte et Grief -->
+                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'griefs-projets' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
+                        <i class="fas fa-file-signature"></i>  Griefs projets 
+                    </a> 
+                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'plaintes' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
+                        <i class="fas fa-file-signature"></i>  plaintes
+                    </a> 
                     <div class="fvt-topbar__social">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                      
@@ -672,6 +677,7 @@
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'a-propos' ) ); ?>">À propos</a>
                         <ul class="sub-menu">
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'ministere' ) ); ?>">Ministère</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'mission' ) ); ?>">Mission</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'champs' ) ); ?>">Champ d'action</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'organigramme' ) ); ?>">Organigramme</a></li>
@@ -680,10 +686,13 @@
                     </li>
 
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'opportunite' ) ); ?>">Opportunités</a>
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet' ) ); ?>">Projets</a>
                         <ul class="sub-menu">
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projets' ) ); ?>">Projets</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>">Soumettre un projet</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'suivre' ) ); ?>">Suivre une soummission</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grands-projets' ) ); ?>">Grands Projets climat</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'realisations' ) ); ?>">Realisation</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'manifester' ) ); ?>">Manifestation d'intérêt</a></li>
                         </ul>
                     </li>
@@ -695,14 +704,6 @@
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'foret-et-biodiversite' ) ); ?>">Forêt et Biodiversité</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'eau-et-assainissement' ) ); ?>">Eau et Assainissement</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructures Durables</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-realise' ) ); ?>">Projets</a>
-                        <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grand-projet-realise' ) ); ?>">Grands Projets réalisés</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet-approuve' ) ); ?>">Projets Approuvés</a></li>
                         </ul>
                     </li>
 
@@ -723,13 +724,17 @@
                         </ul>
                     </li>
 
-                    <li class="dropdown">
+                    <!--<li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'liens-utiles' ) ); ?>">Liens utiles</a>
                         <ul class="sub-menu">
                             <li><a href="#" target="_blank" rel="noopener">Ministère de l'Environnement</a></li>
                             <li><a href="#" target="_blank" rel="noopener">Présidence de la République</a></li>
                             <li><a href="#" target="_blank" rel="noopener">Autres structures partenaires</a></li>
                         </ul>
+                    </li> -->
+                    <li class="dropdown">
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'politique' ) ); ?>">Politique et Stratégie</a>
+                        
                     </li>
 
                 </ul>

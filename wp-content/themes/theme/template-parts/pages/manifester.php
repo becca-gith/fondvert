@@ -49,7 +49,7 @@ $infos_mi = array(
 				<li class="current">Manifestation d'intérêt</li>
 			</ol>
 		</nav>
-		<span class="manifestation-header__badge"><i class="fas fa-hand-paper"></i> Fonds Vert Togo</span>
+		<span class="manifestation-header__badge"><i class="fas fa-hand-paper"></i> Togo Green Fund </span>
 		<h1>Manifestation d'intérêt</h1>
 		<div class="title-underline"></div>
 		<p class="manifestation-header__sub">Vous souhaitez collaborer avec le Fonds Vert ? Exprimez votre intérêt pour un futur projet.</p>

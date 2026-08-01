@@ -7,48 +7,7 @@
  */
 
 // Structure hiérarchique de l'organigramme
-$org_data = array(
-	'directeur_general' => array(
-		'nom'     => 'Dr. Komi AGBOKLI',
-		'fonction' => 'Directeur Général',
-	),
-	'comite_gestion' => array(
-		'titre'    => 'Comité de Gestion',
-		'membres'  => array(
-			array( 'nom' => 'Mme Afi DOSSOU', 'fonction' => 'Présidente' ),
-			array( 'nom' => 'M. Tétévi KPODZRO', 'fonction' => 'Vice-Président' ),
-			array( 'nom' => 'Mme Yawa AMEGNON', 'fonction' => 'Secrétaire' ),
-		),
-	),
-	'direction_operations' => array(
-		'titre'    => 'Direction des Opérations',
-		'membres'  => array(
-			array( 'nom' => 'M. Yao KOUASSI', 'fonction' => 'Directeur' ),
-			array( 'nom' => 'Mme Ama ACKAH', 'fonction' => 'Chef de Département Projets' ),
-		),
-	),
-	'direction_suivi' => array(
-		'titre'    => 'Direction du Suivi-Évaluation',
-		'membres'  => array(
-			array( 'nom' => 'M. Koffi AHOUNOU', 'fonction' => 'Directeur' ),
-			array( 'nom' => 'Mme Rachel AGBO', 'fonction' => 'Spécialiste Suivi' ),
-		),
-	),
-	'direction_admin' => array(
-		'titre'    => 'Direction Administrative et Financière',
-		'membres'  => array(
-			array( 'nom' => 'Mme Grace AMEWO', 'fonction' => 'Directrice' ),
-			array( 'nom' => 'M. Jean SEDZRO', 'fonction' => 'Responsable Comptable' ),
-		),
-	),
-	'direction_partenariats' => array(
-		'titre'    => 'Direction des Partenariats et Mobilisation',
-		'membres'  => array(
-			array( 'nom' => 'M. Komlan ADJOVI', 'fonction' => 'Directeur' ),
-			array( 'nom' => 'Mme Elom AGBEKOU', 'fonction' => 'Chargée de Mobilisation' ),
-		),
-	),
-);
+
 ?>
 
 <!-- ============================================================
@@ -69,7 +28,21 @@ $org_data = array(
 		<span class="org-header__badge"><i class="fas fa-sitemap"></i> Fonds Vert Togo</span>
 		<h1>Organigramme</h1>
 		<div class="title-underline"></div>
+			<p class="documents-header__sub">
+		    Le Fonds Vert du Togo est gouverné par une équipe de direction et des comités spécialisés qui assurent la mise en œuvre, le suivi et la transparence de ses actions.
+			L’organigramme ci-dessous présente la structure hiérarchique du Fonds, avec les responsabilités clés pour chaque niveau. Cette organisation garantit une gestion efficace et une prise de décision participative.
+			</p>
 	</div>
+	
+			<!--<div class="org-texte">
+				<p class="first-paragraph">
+					Le Fonds Vert du Togo est gouverné par une équipe de direction et des comités spécialisés qui assurent la mise en œuvre, le suivi et la transparence de ses actions.
+				</p>
+				<p>
+					L’organigramme ci-dessous présente la structure hiérarchique du Fonds, avec les responsabilités clés pour chaque niveau. Cette organisation garantit une gestion efficace et une prise de décision participative.
+				</p>
+			</div> -->
+		
 </section>
 
 <!-- ============================================================
@@ -77,96 +50,12 @@ $org_data = array(
      ============================================================ -->
 <section class="org-content">
 	<div class="container">
-		<div class="org-card">
-			<div class="org-texte">
-				<p class="first-paragraph">
-					Le Fonds Vert du Togo est gouverné par une équipe de direction et des comités spécialisés qui assurent la mise en œuvre, le suivi et la transparence de ses actions.
-				</p>
-				<p>
-					L’organigramme ci-dessous présente la structure hiérarchique du Fonds, avec les responsabilités clés pour chaque niveau. Cette organisation garantit une gestion efficace et une prise de décision participative.
-				</p>
-			</div>
-		</div>
-
+		
 		<!-- ===== ORGANIGRAMME VISUEL ===== -->
-		<div class="org-tree">
-
-			<!-- Niveau 1 : Directeur Général -->
-			<div class="org-level org-level--top">
-				<div class="org-node org-node--dg">
-					<div class="org-node__icon"><i class="fas fa-user-tie"></i></div>
-					<h3 class="org-node__nom"><?php echo esc_html( $org_data['directeur_general']['nom'] ); ?></h3>
-					<p class="org-node__fonction"><?php echo esc_html( $org_data['directeur_general']['fonction'] ); ?></p>
-				</div>
+			<div class="organigramme__image">	
+				<img src="http://localhost/fondvert/wp-content/uploads/2026/08/Organigramme_TGF.png" alt="organigramme" loading="lazy">
 			</div>
-
-			<!-- Lignes de connexion (visuelles) -->
-			<div class="org-connectors">
-				<span></span><span></span><span></span><span></span><span></span>
-			</div>
-
-			<!-- Niveau 2 : Comité de Gestion -->
-			<div class="org-level org-level--second">
-				<div class="org-node org-node--comite">
-					<div class="org-node__icon"><i class="fas fa-users"></i></div>
-					<h3 class="org-node__titre"><?php echo esc_html( $org_data['comite_gestion']['titre'] ); ?></h3>
-					<ul class="org-node__membres">
-						<?php foreach ( $org_data['comite_gestion']['membres'] as $membre ) : ?>
-							<li><strong><?php echo esc_html( $membre['nom'] ); ?></strong> – <?php echo esc_html( $membre['fonction'] ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-			</div>
-
-			<!-- Lignes de connexion -->
-			<div class="org-connectors org-connectors--four">
-				<span></span><span></span><span></span><span></span>
-			</div>
-
-			<!-- Niveau 3 : Directions -->
-			<div class="org-level org-level--third">
-				<div class="org-node org-node--direction">
-					<div class="org-node__icon"><i class="fas fa-cogs"></i></div>
-					<h3 class="org-node__titre"><?php echo esc_html( $org_data['direction_operations']['titre'] ); ?></h3>
-					<ul class="org-node__membres">
-						<?php foreach ( $org_data['direction_operations']['membres'] as $membre ) : ?>
-							<li><strong><?php echo esc_html( $membre['nom'] ); ?></strong> – <?php echo esc_html( $membre['fonction'] ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-
-				<div class="org-node org-node--direction">
-					<div class="org-node__icon"><i class="fas fa-chart-line"></i></div>
-					<h3 class="org-node__titre"><?php echo esc_html( $org_data['direction_suivi']['titre'] ); ?></h3>
-					<ul class="org-node__membres">
-						<?php foreach ( $org_data['direction_suivi']['membres'] as $membre ) : ?>
-							<li><strong><?php echo esc_html( $membre['nom'] ); ?></strong> – <?php echo esc_html( $membre['fonction'] ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-
-				<div class="org-node org-node--direction">
-					<div class="org-node__icon"><i class="fas fa-file-invoice-dollar"></i></div>
-					<h3 class="org-node__titre"><?php echo esc_html( $org_data['direction_admin']['titre'] ); ?></h3>
-					<ul class="org-node__membres">
-						<?php foreach ( $org_data['direction_admin']['membres'] as $membre ) : ?>
-							<li><strong><?php echo esc_html( $membre['nom'] ); ?></strong> – <?php echo esc_html( $membre['fonction'] ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-
-				<div class="org-node org-node--direction">
-					<div class="org-node__icon"><i class="fas fa-handshake"></i></div>
-					<h3 class="org-node__titre"><?php echo esc_html( $org_data['direction_partenariats']['titre'] ); ?></h3>
-					<ul class="org-node__membres">
-						<?php foreach ( $org_data['direction_partenariats']['membres'] as $membre ) : ?>
-							<li><strong><?php echo esc_html( $membre['nom'] ); ?></strong> – <?php echo esc_html( $membre['fonction'] ); ?></li>
-						<?php endforeach; ?>
-					</ul>
-				</div>
-			</div>
-
-		</div><!-- /.org-tree -->
+	
 	</div>
 </section>
 
@@ -198,6 +87,17 @@ $org_data = array(
 	--rouge-fvt:       #D21034;
 	--gris-fond:       #f6faf7;
 	--blanc:           #ffffff;
+}
+/*CSS ORGANIGRAMME*/
+.organigramme__image {
+    display: flex;
+    justify-content: center;
+}
+
+.organigramme__image img {
+    max-width: 1000px;
+    width: 200%;
+    height: auto;
 }
 
 /* ===== EN‑TÊTE : breadcrumb et titre ===== */

@@ -23,6 +23,20 @@ if ( ! function_exists( 'fvt_page_url' ) ) {
 // ("Diapositives d'accueil") pour que ce soit modifiable depuis l'admin.
 $fvt_slides = array(
 	array(
+		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-4-4.jpg',
+		'subtitle' => __( 'Financer la résilience climatique', 'alefox' ),
+		'title'    => __( 'Un Togo Green Fund au service<br>d\'un Togo dur<span>a</span>ble', 'alefox' ),
+		'text'     => __( 'Le Togo Green Fund du Togo mobilise et canalise des financements climatiques<br>pour soutenir des projets à fort impact environnemental et social.', 'alefox' ),
+		'btn_one'  => array(
+			'label' => __( 'Découvrir nos projets', 'alefox' ),
+			'url'   => fvt_page_url( 'projets-programmes' ),
+		),
+		'btn_two'  => array(
+			'label' => __( 'Soumettre un projet', 'alefox' ),
+			'url'   => fvt_page_url( 'appels-a-projets' ),
+		),
+	),
+	array(
 		'image'    => FVT_THEME_URI . '/assets/images/backgrounds/slider-4-1.jpg',
 		'subtitle' => __( 'Financer la résilience climatique', 'alefox' ),
 		'title'    => __( 'Un Togo Green Fund au service<br>d\'un Togo dur<span>a</span>ble', 'alefox' ),

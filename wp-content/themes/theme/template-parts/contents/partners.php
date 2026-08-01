@@ -42,6 +42,22 @@ $partners = array(
 		'name' => 'PNUD',
 		'logo' => 'pnud.jpg',
 	),
+	array(
+		'name' => 'BOAD',
+		'logo' => 'boad.jpg',
+	),
+	array(
+		'name' => 'BIDC',
+		'logo' => 'bidc.webp',
+	),
+	array(
+		'name' => 'BAD',
+		'logo' => 'bad.png',
+	),
+	array(
+		'name' => 'GGGI',
+		'logo' => 'gggitg.jpg',
+	),
 );
 ?>
 

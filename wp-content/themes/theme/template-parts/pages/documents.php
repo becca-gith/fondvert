@@ -113,7 +113,7 @@ $types_doc = array(
 				<li class="current">Documents</li>
 			</ol>
 		</nav>
-		<span class="documents-header__badge"><i class="fas fa-folder-open"></i> Fonds Vert Togo</span>
+		<span class="documents-header__badge"><i class="fas fa-folder-open"></i> Togo Green Fund </span>
 		<h1>Documents</h1>
 		<div class="title-underline"></div>
 		<p class="documents-header__sub">Consultez et téléchargez nos rapports, guides et publications.</p>
