@@ -42,15 +42,17 @@
         :root {
             --fvt-green:       #0a6e3e;
             --fvt-green-dark:  #063d24;
+            --fvt-green-darker:#042518;
             --fvt-green-light: #e8f5ec;
             --fvt-yellow:      #ffce00;
+            --fvt-yellow-soft: #ffe27a;
             --fvt-red:         #d21034;
             --fvt-text:        #1c2b22;
             --fvt-white:       #ffffff;
             --fvt-shadow:      0 4px 24px rgba(6, 61, 36, 0.10);
             --fvt-shadow-lg:   0 20px 45px rgba(6, 61, 36, 0.16);
-            --fvt-font-body:   'Roboto', sans-serif;
-            --fvt-font-title:  'Roboto', serif;
+            --fvt-font-body:   'Kumbh Sans', sans-serif;
+            --fvt-font-title:  'Kumbh Sans', serif;
         }
 
         /* Utilitaire pour les grands titres de section */
@@ -62,13 +64,13 @@
         }
 
         /* ========== POLICE PAR DÉFAUT ========== */
-        html { font-family: 'Playfair Display', sans-serif; }
+        html { font-family: 'Kumbh Sans', sans-serif; }
         body,
         button, input, select, textarea,
         h1, h2, h3, h4, h5, h6,
         p, a, span, li, ul, div,
         .main-menu__list, .fvt-mobile-nav, .topbar-two, .fvt-cta-btn {
-            font-family: 'Roboto', sans-serif !important; /* Police de toute la page 
+            font-family: 'Kumbh Sans', sans-serif !important; /* Police de toute la page */
             color: var(--fvt-text);
         }
         body { font-weight: 400; }
@@ -88,11 +90,11 @@
 
         /* ========== TOPBAR ========== */
         .topbar-two {
-            background: #0a6e3e;   /* ← vert foncé */
-            margin-bottom: 0;                    /* ← supprime l'espace sous le topbar */
+            background: linear-gradient(90deg, var(--fvt-green-darker) 0%, var(--fvt-green-dark) 55%, var(--fvt-green) 130%);
+            margin-bottom: 0;
             padding-bottom: 0;
             position: relative;
-            border-bottom: 2px solid var(--fvt-yellow); /* séparation élégante */
+            border-bottom: 2px solid var(--fvt-yellow);
         }
         .topbar-two__inner {
             display: flex;
@@ -173,8 +175,8 @@
 
         /* ========== HEADER PRINCIPAL ========== */
         .main-header--three {
-            background: var(--fvt-green-dark);   /* ← même vert foncé que le topbar */
-            margin-top: 0;                       /* ← supprime l'espace au-dessus du header */
+            background: linear-gradient(100deg, var(--fvt-green-darker) 0%, var(--fvt-green-dark) 100%);
+            margin-top: 0;
             padding-top: 0;
             box-shadow: var(--fvt-shadow);
             position: relative;
@@ -234,7 +236,7 @@
         .main-menu__list {
             display: flex;
             align-items: center;
-            gap: 8px;                        /* ← espace entre les éléments du menu */
+            gap: 8px;
             margin: 0;
             padding: 0;
             list-style: none;
@@ -244,10 +246,10 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 12px 22px;              /* ← padding horizontal augmenté */
+            padding: 12px 22px;
             font-size: 12.5px;
             font-weight: 700;
-            text-transform: uppercase;       /* ← LETTRES CAPITALES */
+            text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--fvt-white);
             white-space: nowrap;
@@ -275,7 +277,7 @@
         .main-menu__list > li > a::after {
             content: '';
             position: absolute;
-            left: 22px; right: 22px; bottom: 4px; /* aligné avec le nouveau padding */
+            left: 22px; right: 22px; bottom: 4px;
             height: 3px;
             background: var(--fvt-yellow);
             transform: scaleX(0);
@@ -520,7 +522,7 @@
            SURCHARGE FORCÉE pour neutraliser les règles d'alefox.css
            ========================================================== */
         .main-header.main-header--three {
-            background: var(--fvt-green-dark) !important;
+            background: linear-gradient(100deg, var(--fvt-green-darker) 0%, var(--fvt-green-dark) 100%) !important;
             width: 100% !important;
         }
         .main-header--three .main-header__inner {
@@ -545,7 +547,7 @@
         }
         .main-header--three .main-menu .main-menu__list {
             display: flex !important;
-            gap: 8px !important;             /* ← espace entre les items */
+            gap: 8px !important;
             flex: 1 1 auto !important;
             justify-content: center !important;
             order: 1 !important;
@@ -560,9 +562,9 @@
             color: var(--fvt-white) !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
-            font-weight: 900 !important;
+            font-weight: 700 !important;
             font-size: 15.5px !important;
-            padding: 12px 22px !important;    /* ← padding augmenté */
+            padding: 12px 22px !important;
             text-shadow: none !important;
         }
         .main-header--three .main-menu .main-menu__list > li.current > a,
@@ -622,28 +624,27 @@
     <div class="fvt-flag-strip"><span></span><span></span><span></span></div>
 
     <!-- Topbar -->
-    <div class="topbar-two"> 
+    <div class="topbar-two">
         <div class="container">
             <div class="topbar-two__inner">
                 <div class="fvt-topbar__contacts">
-                    <a href="tel:+22820223040"><i class="fas fa-phone-alt"><strong></i>+228 20 22 30 40</a></strong>
+                    <a href="tel:+22820223040"><i class="fas fa-phone-alt"></i><strong>+228 20 22 30 40</strong></a>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
                     <a href="mailto:contact@togogreenfund.tg" class="fvt-hide-mobile"><i class="fas fa-envelope"></i><strong>contact@togogreenfund.tg</strong></a>
                     <span class="fvt-hide-mobile fvt-topbar__divider"></span>
-                    <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"><strong></i>Lomé, Togo</strong></span>
+                    <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"></i><strong>Lomé, Togo</strong></span>
                 </div>
                 <div class="fvt-topbar__right">
-                
+
                     <!--Plainte et Grief -->
                     <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'griefs-projets' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
-                        <i class="fas fa-file-signature"></i>  Griefs projets 
-                    </a> 
+                        <i class="fas fa-file-signature"></i> Griefs projets
+                    </a>
                     <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'plaintes' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
-                        <i class="fas fa-file-signature"></i>  plaintes
-                    </a> 
+                        <i class="fas fa-file-signature"></i> Plaintes
+                    </a>
                     <div class="fvt-topbar__social">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                     
                         <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
@@ -677,9 +678,9 @@
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'a-propos' ) ); ?>">À propos</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'ministere' ) ); ?>">Ministère</a></li>
+                           
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'mission' ) ); ?>">Mission</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'champs' ) ); ?>">Champ d'action</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'champs' ) ); ?>">Champs d'action</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'organigramme' ) ); ?>">Organigramme</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'equipe' ) ); ?>">Équipe</a></li>
                         </ul>
@@ -724,17 +725,8 @@
                         </ul>
                     </li>
 
-                    <!--<li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'liens-utiles' ) ); ?>">Liens utiles</a>
-                        <ul class="sub-menu">
-                            <li><a href="#" target="_blank" rel="noopener">Ministère de l'Environnement</a></li>
-                            <li><a href="#" target="_blank" rel="noopener">Présidence de la République</a></li>
-                            <li><a href="#" target="_blank" rel="noopener">Autres structures partenaires</a></li>
-                        </ul>
-                    </li> -->
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'politique' ) ); ?>">Politique et Stratégie</a>
-                        
                     </li>
 
                 </ul>

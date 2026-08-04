@@ -82,7 +82,8 @@ $fvt_slides = array(
 ?>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@400;600;700&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
 
 <style>
 	/* ============ FOND & SUPERPOSITION ============ */
@@ -90,19 +91,28 @@ $fvt_slides = array(
 	   c'est LA vraie cause du slider géant. On l'écrase ici avec !important. */
 	.main-slider-three__item {
 		position: relative;
-		padding-top: 140px !important;
-		padding-bottom: 120px !important;
+		padding-top: 150px !important;
+		padding-bottom: 130px !important;
+		overflow: hidden;
 	}
-	.main-slider-three__bg { position: absolute; inset: 0; background-position: center; background-size: cover; }
+	.main-slider-three__bg {
+		position: absolute;
+		inset: 0;
+		background-position: center;
+		background-size: cover;
+		transform: scale(1.06);
+		transition: transform 8s ease;
+	}
+	.owl-item.active .main-slider-three__bg { transform: scale(1); }
 
-	.main-slider-three__bg__color:nth-child(1) { background: linear-gradient(180deg, rgba(6,61,36,0.65) 0%, rgba(6,61,36,0.35) 45%, rgba(6,61,36,0.75) 100%); }
+	.main-slider-three__bg__color:nth-child(1) { background: linear-gradient(180deg, rgba(4,37,24,0.78) 0%, rgba(6,61,36,0.42) 45%, rgba(4,37,24,0.85) 100%); }
 	.main-slider-three__bg__color:nth-child(2) { background: rgba(10, 110, 62, 0.15); }
-	.main-slider-three__bg__color:nth-child(3) { background: linear-gradient(120deg, rgba(255,206,0,0.10) 0%, transparent 40%); }
-	.main-slider-three__bg__color:nth-child(4) { background: linear-gradient(300deg, rgba(210,16,52,0.12) 0%, transparent 35%); }
+	.main-slider-three__bg__color:nth-child(3) { background: linear-gradient(120deg, rgba(255,206,0,0.12) 0%, transparent 40%); }
+	.main-slider-three__bg__color:nth-child(4) { background: linear-gradient(300deg, rgba(210,16,52,0.14) 0%, transparent 35%); }
 	.main-slider-three__bg__color:nth-child(5),
-	.main-slider-three__bg__color:nth-child(6) { background: rgba(0,0,0,0.18); }
+	.main-slider-three__bg__color:nth-child(6) { background: rgba(0,0,0,0.22); }
 
-	/* Liseré tricolore discret en bas de chaque diapositive */
+	/* Liseré tricolore en bas de chaque diapositive */
 	.main-slider-three__item::after {
 		content: '';
 		position: absolute;
@@ -112,7 +122,7 @@ $fvt_slides = array(
 		z-index: 3;
 	}
 
-	/* ============ POSITION DU TEXTE — resserré, proche du haut ============ */
+	/* ============ POSITION DU TEXTE ============ */
 	.main-slider-three__item .container { height: 100%; }
 	.main-slider-three__content {
 		position: relative;
@@ -122,57 +132,70 @@ $fvt_slides = array(
 		align-items: center;
 	}
 
-	/* Les décorations (fleurs/arbres) sont calées par défaut sur bottom:220px dans alefox.css,
-	   pensé pour l'ancien padding géant. On les fait descendre pour qu'elles restent bien
-	   positionnées avec notre slider plus compact. */
 	.main-slider-three__shape-one,
 	.main-slider-three__shape-two {
 		bottom: 20px !important;
+		opacity: 0.85;
 	}
+
+	/* ============ ANIMATION D'ENTRÉE ============ */
+	@keyframes fvtFadeUp {
+		from { opacity: 0; transform: translateY(22px); }
+		to   { opacity: 1; transform: translateY(0); }
+	}
+	.owl-item.active .main-slider-three__sub-title  { animation: fvtFadeUp .7s ease .15s both; }
+	.owl-item.active .main-slider-three__title      { animation: fvtFadeUp .7s ease .30s both; }
+	.owl-item.active .main-slider-three__text        { animation: fvtFadeUp .7s ease .45s both; }
+	.owl-item.active .main-slider-three__btn         { animation: fvtFadeUp .7s ease .60s both; }
 
 	/* ============ TYPOGRAPHIE ============ */
 	.main-slider-three__sub-title {
+		font-family: 'Kumbh Sans', sans-serif !important;
 		display: inline-flex;
 		align-items: center;
-		gap: 6px;
+		gap: 8px;
 		background: rgba(255, 206, 0, 0.14);
 		border: 1px solid rgba(255, 206, 0, 0.5);
 		color: #ffce00;
-		font-size: 11px;
+		font-size: 11.5px;
 		font-weight: 700;
-		letter-spacing: 1px;
+		letter-spacing: 1.2px;
 		text-transform: uppercase;
-		padding: 4px 14px;
+		padding: 6px 18px;
 		border-radius: 30px;
-		margin-bottom: 8px;
+		margin-bottom: 18px;
 	}
 	.main-slider-three__sub-title::before {
 		content: '';
-		width: 6px; height: 6px;
+		width: 7px; height: 7px;
 		border-radius: 50%;
 		background: #ffce00;
+		box-shadow: 0 0 0 4px rgba(255, 206, 0, 0.22);
 		display: inline-block;
 	}
 
 	.main-slider-three__title {
 		font-family: 'Playfair Display', serif !important;
 		color: #ffffff;
-		font-size: 38px !important;
-		line-height: 1.3 !important;
+		font-size: 42px !important;
+		line-height: 1.28 !important;
 		font-weight: 700;
-		text-shadow: 0 4px 18px rgba(0,0,0,0.25);
-		margin: 0 0 14px !important;
+		letter-spacing: 0.2px;
+		text-shadow: 0 4px 22px rgba(0,0,0,0.35);
+		margin: 0 0 18px !important;
 	}
-	.main-slider-three__title span { color: #ffce00; }
+	.main-slider-three__title span {
+		color: #ffce00;
+		font-style: italic;
+	}
 
-	.main-slider-three__text {
-		margin: 0 0 16px !important;
-	}
+	.main-slider-three__text { margin: 0 0 26px !important; }
 	.main-slider-three__text__one {
-		color: #eef7f0;
-		font-size: 14px !important;
-		line-height: 1.55 !important;
-		max-width: 520px;
+		font-family: 'Kumbh Sans', sans-serif !important;
+		color: #eaf5ee;
+		font-size: 15px !important;
+		line-height: 1.65 !important;
+		max-width: 560px;
 		margin: 0 auto;
 	}
 
@@ -180,30 +203,37 @@ $fvt_slides = array(
 	.main-slider-three__btn { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
 
 	.main-slider-three__btn .alefox-btn {
+		font-family: 'Kumbh Sans', sans-serif !important;
+		position: relative;
+		overflow: hidden;
 		background: #0a6e3e;
 		border: 2px solid #0a6e3e;
 		color: #fff;
 		font-weight: 700;
-		font-size: 13px;
-		padding: 9px 20px;
+		font-size: 13.5px;
+		letter-spacing: 0.2px;
+		padding: 11px 26px;
 		border-radius: 40px;
 		transition: all 0.3s ease;
-		box-shadow: 0 8px 18px rgba(10, 110, 62, 0.3);
+		box-shadow: 0 10px 22px rgba(10, 110, 62, 0.35);
 	}
 	.main-slider-three__btn .alefox-btn:hover {
 		background: #ffce00;
 		border-color: #ffce00;
 		color: #063d24;
 		transform: translateY(-3px);
-		box-shadow: 0 12px 22px rgba(255, 206, 0, 0.35);
+		box-shadow: 0 14px 28px rgba(255, 206, 0, 0.4);
 	}
 	.main-slider-three__btn__two .alefox-btn {
-		background: transparent;
-		border: 2px solid rgba(255,255,255,0.7);
+		font-family: 'Kumbh Sans', sans-serif !important;
+		background: rgba(255,255,255,0.06);
+		backdrop-filter: blur(2px);
+		border: 2px solid rgba(255,255,255,0.75);
 		color: #ffffff;
 		font-weight: 700;
-		font-size: 13px;
-		padding: 9px 20px;
+		font-size: 13.5px;
+		letter-spacing: 0.2px;
+		padding: 11px 26px;
 		border-radius: 40px;
 		transition: all 0.3s ease;
 	}
@@ -212,16 +242,43 @@ $fvt_slides = array(
 		border-color: #d21034;
 		color: #ffffff;
 		transform: translateY(-3px);
-		box-shadow: 0 14px 30px rgba(210, 16, 52, 0.35);
+		box-shadow: 0 16px 32px rgba(210, 16, 52, 0.4);
+	}
+
+	/* ============ PUCES DE NAVIGATION (owl dots) ============ */
+	.main-slider-three .owl-dots {
+		position: absolute;
+		left: 0; right: 0; bottom: 24px;
+		z-index: 4;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+	}
+	.main-slider-three .owl-dot span {
+		display: block;
+		width: 9px; height: 9px;
+		margin: 0;
+		border-radius: 50%;
+		background: rgba(255,255,255,0.4);
+		transition: all .3s ease;
+	}
+	.main-slider-three .owl-dot:hover span { background: rgba(255,255,255,0.75); }
+	.main-slider-three .owl-dot.active span {
+		width: 28px;
+		border-radius: 6px;
+		background: #ffce00;
+		box-shadow: 0 0 0 3px rgba(255,206,0,0.2);
 	}
 
 	@media (max-width: 767px) {
 		.main-slider-three__item {
-			padding-top: 90px !important;
-			padding-bottom: 70px !important;
+			padding-top: 96px !important;
+			padding-bottom: 76px !important;
 		}
-		.main-slider-three__title { font-size: 24px !important; }
-		.main-slider-three__text__one { font-size: 13px !important; }
+		.main-slider-three__title { font-size: 25px !important; }
+		.main-slider-three__text__one { font-size: 13.5px !important; }
+		.main-slider-three .owl-dots { bottom: 14px; }
 	}
 </style>
 
@@ -261,7 +318,7 @@ $fvt_slides = array(
 					<div class="container">
 						<div class="main-slider-three__content text-center">
 							<h5 class="main-slider-three__sub-title"><?php echo esc_html( $slide['subtitle'] ); ?></h5>
-							<h2 class="main-slider-three__title" style="font-family: 'Playfair Display', serif;"><?php echo wp_kses_post( $slide['title'] ); ?></h2>
+							<h2 class="main-slider-three__title"><?php echo wp_kses_post( $slide['title'] ); ?></h2>
 							<div class="main-slider-three__text">
 								<p class="main-slider-three__text__one"><?php echo wp_kses_post( $slide['text'] ); ?></p>
 							</div>

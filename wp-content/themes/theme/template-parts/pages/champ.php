@@ -1,57 +1,65 @@
 <?php
 /**
- * Template part pour la page "Champ d'actions" – design harmonisé avec le header Fonds Vert Togo
- * Récupère le contenu de la page dont le slug est 'champ-dactions'
+ * Template part : Page "Champ d'actions" – version dynamique avec metaboxes natives
+ * Récupère le contenu de la page dont le slug est 'champs'
+ *
+ * @package TogoGreenFund
  */
 
-$champ_page = get_page_by_path('champs');
+// Récupérer la page "champs"
+$champ_page = get_page_by_path( 'champs' );
 if ( ! $champ_page ) {
-	echo '<div class="container" style="padding: 80px 0; text-align: center;"><p>Aucune page "Champ d\'actions" trouvée. Veuillez créer une page avec le slug <strong>champ-dactions</strong>.</p></div>';
+	echo '<div class="container" style="padding: 80px 0; text-align: center;"><p>Aucune page "Champ d\'actions" trouvée. Veuillez créer une page avec le slug <strong>champs</strong>.</p></div>';
 	return;
 }
 
+$page_id = $champ_page->ID;
 $page_title   = get_the_title( $champ_page );
 $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $champ_page ) );
 
-// Domaines d'action (statiques ou à récupérer depuis ACF plus tard)
-$domaines = array(
-	array(
-		'icon'  => 'fa-seedling',
-		'title' => __( 'Agriculture durable', 'alefox' ),
-		'desc'  => __( 'Promotion de pratiques agricoles résilientes et durables pour assurer la sécurité alimentaire.', 'alefox' ),
-		'link'  => home_url( '/agriculture-durable' ),
-	),
-	array(
-		'icon'  => 'fa-solar-panel',
-		'title' => __( 'Énergies renouvelables', 'alefox' ),
-		'desc'  => __( 'Accélération de la transition énergétique via des projets solaires, éoliens et biomasse.', 'alefox' ),
-		'link'  => home_url( '/energies-renouvelables' ),
-	),
-	array(
-		'icon'  => 'fa-tree',
-		'title' => __( 'Gestion des forêts', 'alefox' ),
-		'desc'  => __( 'Protection et restauration des écosystèmes forestiers, reboisement et lutte contre la déforestation.', 'alefox' ),
-		'link'  => home_url( '/gestion-forets' ),
-	),
-	array(
-		'icon'  => 'fa-water',
-		'title' => __( 'Eau et assainissement', 'alefox' ),
-		'desc'  => __( 'Amélioration de l\'accès à l\'eau potable et à l\'assainissement dans les zones rurales.', 'alefox' ),
-		'link'  => home_url( '/eau-assainissement' ),
-	),
-	array(
-		'icon'  => 'fa-recycle',
-		'title' => __( 'Économie circulaire', 'alefox' ),
-		'desc'  => __( 'Soutien à des initiatives de recyclage, de réduction des déchets et de création d\'emplois verts.', 'alefox' ),
-		'link'  => home_url( '/economie-circulaire' ),
-	),
-	array(
-		'icon'  => 'fa-umbrella-beach',
-		'title' => __( 'Zones côtières', 'alefox' ),
-		'desc'  => __( 'Protection des littoraux togolais contre l\'érosion et les inondations.', 'alefox' ),
-		'link'  => home_url( '/zones-cotieres' ),
-	),
-);
+// Récupération des domaines d'action depuis les metaboxes
+$domaines = get_post_meta( $page_id, '_fvt_domaines', true );
+if ( empty( $domaines ) || ! is_array( $domaines ) ) {
+	// Fallback si aucun domaine n'est défini
+	$domaines = array(
+		array(
+			'icon'  => 'fa-seedling',
+			'title' => __( 'Agriculture durable', 'alefox' ),
+			'desc'  => __( 'Promotion de pratiques agricoles résilientes et durables pour assurer la sécurité alimentaire.', 'alefox' ),
+			'link'  => home_url( '/agriculture-durable' ),
+		),
+		array(
+			'icon'  => 'fa-solar-panel',
+			'title' => __( 'Énergies renouvelables', 'alefox' ),
+			'desc'  => __( 'Accélération de la transition énergétique via des projets solaires, éoliens et biomasse.', 'alefox' ),
+			'link'  => home_url( '/energies-renouvelables' ),
+		),
+		array(
+			'icon'  => 'fa-tree',
+			'title' => __( 'Gestion des forêts', 'alefox' ),
+			'desc'  => __( 'Protection et restauration des écosystèmes forestiers, reboisement et lutte contre la déforestation.', 'alefox' ),
+			'link'  => home_url( '/gestion-forets' ),
+		),
+		array(
+			'icon'  => 'fa-water',
+			'title' => __( 'Eau et assainissement', 'alefox' ),
+			'desc'  => __( 'Amélioration de l\'accès à l\'eau potable et à l\'assainissement dans les zones rurales.', 'alefox' ),
+			'link'  => home_url( '/eau-assainissement' ),
+		),
+		array(
+			'icon'  => 'fa-recycle',
+			'title' => __( 'Économie circulaire', 'alefox' ),
+			'desc'  => __( 'Soutien à des initiatives de recyclage, de réduction des déchets et de création d\'emplois verts.', 'alefox' ),
+			'link'  => home_url( '/economie-circulaire' ),
+		),
+		array(
+			'icon'  => 'fa-umbrella-beach',
+			'title' => __( 'Zones côtières', 'alefox' ),
+			'desc'  => __( 'Protection des littoraux togolais contre l\'érosion et les inondations.', 'alefox' ),
+			'link'  => home_url( '/zones-cotieres' ),
+		),
+	);
+}
 ?>
 
 <!-- ============================================================
@@ -69,7 +77,7 @@ $domaines = array(
 			</ol>
 		</nav>
 
-		<span class="champ-header__badge"><i class="fas fa-bullseye"></i> Fonds Vert Togo</span>
+		<span class="champ-header__badge"><i class="fas fa-bullseye"></i> Togo Green Fund</span>
 		<h1><?php echo esc_html( $page_title ); ?></h1>
 		<div class="title-underline"></div>
 	</div>
@@ -123,7 +131,7 @@ $domaines = array(
 	<div class="container">
 		<h2>Vous souhaitez agir avec nous ?</h2>
 		<div class="cta-divider"></div>
-		<p>Rejoignez les acteurs qui construisent, avec le Fonds Vert Togo, un avenir résilient et durable.</p>
+		<p>Rejoignez les acteurs qui construisent, avec le Togo Green Fund, un avenir résilient et durable.</p>
 		<a href="<?php echo esc_url( home_url( '/soumettre-un-projet' ) ); ?>" class="cta-btn">
 			Soumettre un projet <i class="fas fa-arrow-right"></i>
 		</a>
@@ -131,11 +139,11 @@ $domaines = array(
 </section>
 
 <!-- ============================================================
-     STYLES CSS (intégrés)
+     STYLES CSS (intégrés – inchangés)
      ============================================================ -->
 <style>
 /* ============================================================
-   PAGE CHAMP D'ACTIONS – CHARTE FONDS VERT TOGO
+   PAGE CHAMP D'ACTIONS – CHARTE TOGO GREEN FUND
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;

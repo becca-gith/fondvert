@@ -1,10 +1,13 @@
 <?php
 /**
- * Template part pour la page "Mission" – version simplifiée
- * Récupère le contenu de la page dont le slug est 'mission'
+ * Template part : Page "Mission" – version simple
+ * Affiche le contenu exact de la page WordPress (slug 'mission')
+ *
+ * @package TogoGreenFund
  */
 
-$mission_page = get_page_by_path('mission');
+// Récupérer la page "mission"
+$mission_page = get_page_by_path( 'mission' );
 if ( ! $mission_page ) {
 	echo '<div class="container" style="padding: 80px 0; text-align: center;"><p>Aucune page "Mission" trouvée. Veuillez créer une page avec le slug <strong>mission</strong>.</p></div>';
 	return;
@@ -29,14 +32,14 @@ $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $m
 			</ol>
 		</nav>
 
-		<span class="mission-header__badge"><i class="fas fa-seedling"></i> Fonds Vert Togo</span>
+		<span class="mission-header__badge"><i class="fas fa-seedling"></i> Togo Green Fund</span>
 		<h1><?php echo esc_html( $page_title ); ?></h1>
 		<div class="title-underline"></div>
 	</div>
 </section>
 
 <!-- ============================================================
-     CONTENU PRINCIPAL – UN SEUL BLOC
+     CONTENU PRINCIPAL
      ============================================================ -->
 <section class="mission-content">
 	<div class="container">
@@ -57,13 +60,13 @@ $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $m
 </section>
 
 <!-- ============================================================
-     APPEL À L'ACTION
+     APPEL À L'ACTION (optionnel – peut être supprimé si non souhaité)
      ============================================================ -->
 <section class="mission-cta">
 	<div class="container">
 		<h2>Vous portez un projet climatique ?</h2>
 		<div class="cta-divider"></div>
-		<p>Rejoignez les acteurs qui construisent, avec le Fonds Vert Togo, un avenir résilient et durable.</p>
+		<p>Rejoignez les acteurs qui construisent, avec le Togo Green Fund, un avenir résilient et durable.</p>
 		<a href="<?php echo esc_url( home_url( '/soumettre-un-projet' ) ); ?>" class="cta-btn">
 			Soumettre un projet <i class="fas fa-arrow-right"></i>
 		</a>
@@ -75,7 +78,7 @@ $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $m
      ============================================================ -->
 <style>
 /* ============================================================
-   PAGE MISSION – CHARTE FONDS VERT TOGO
+   PAGE MISSION – CHARTE Togo Green Fund
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;
@@ -187,7 +190,7 @@ $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $m
 	border-radius: 4px;
 }
 
-/* ===== CONTENU PRINCIPAL – UN SEUL BLOC ===== */
+/* ===== CONTENU PRINCIPAL ===== */
 .mission-content {
 	padding: 70px 0 40px;
 	background: #ffffff;
@@ -236,9 +239,8 @@ $page_content = apply_filters( 'the_content', get_post_field( 'post_content', $m
 	font-size: 1.5rem;
 }
 .mission-texte p {
-	margin-bottom: 1.5rem; /* espacement entre paragraphes */
+	margin-bottom: 1.5rem;
 }
-/* Premier paragraphe : drop cap et mise en valeur */
 .mission-texte .first-paragraph {
 	font-size: 1.12rem;
 	font-weight: 500;
