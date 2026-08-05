@@ -1,79 +1,118 @@
 <?php
 /**
- * Template part : Page "Politiques et stratégies" – version statique
- * Fonds Vert du Togo
+ * Template part : Page "Politiques et stratégies" – version dynamique
+ * Récupère les documents depuis le Custom Post Type "document"
  *
- * @package FondsVertTogo
+ * @package TogoGreenFund
  */
 
-// Données des documents politiques et stratégiques
-$documents = array(
-	array(
-		'id'          => 1,
-		'titre'       => 'Plan stratégique 2026 TGF',
-		'categorie'   => 'plan',
-		'format'      => 'PDF',
-		'taille'      => '2.4 Mo',
-		'date'        => 'Janvier 2024',
-		'url'         => '#',
-		'description' => 'Document cadre définissant les orientations stratégiques du Togo Green Fund.',
-		'icone'       => 'fa-file-pdf',
-	),
-	
-	array(
-		'id'          => 2,
-		'titre'       => 'Politique anti fraude du Togo Green Fund',
-		'categorie'   => 'politique',
-		'format'      => 'PDF',
-		'taille'      => '1.9 Mo',
-		'date'        => 'Septembre 2024',
-		'url'         => '#',
-		'description' => 'La potique anti fraude du Togo Green Fund.',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'id'          => 3,
-		'titre'       => 'Décret n°2017-128 du 06 mai 2026 portant création du Togo Green Fund',
-		'categorie'   => 'decret',
-		'format'      => 'PDF',
-		'taille'      => '2.1 Mo',
-		'date'        => 'Novembre 2024',
-		'url'         => '#',
-		'description' => 'decret de création du Togo Green Fund.',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'id'          => 4,
-		'titre'       => 'Plan stratégique du Fonds Vert 2025-2030',
-		'categorie'   => 'plan',
-		'format'      => 'PDF',
-		'taille'      => '5.1 Mo',
-		'date'        => 'Décembre 2024',
-		'url'         => '#',
-		'description' => 'Orientations stratégiques et objectifs du Fonds Vert pour la prochaine décennie.',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'id'          => 5,
-		'titre'       => 'Le mécanisme de règlement des griefs du TGF',
-		'categorie'   => 'mecanisme',
-		'format'      => 'PDF',
-		'taille'      => '4.2 Mo',
-		'date'        => 'Juin 2024',
-		'url'         => '#',
-		'description' => '',
-		'icone'       => 'fa-file-pdf',
-	),
-	
-);
+// Récupération des documents (CPT 'document')
+$documents_query = new WP_Query( array(
+    'post_type'      => 'document',
+    'posts_per_page' => -1,
+    'post_status'    => 'publish',
+    'orderby'        => 'menu_order',
+    'order'          => 'ASC',
+) );
+
+// Construction du tableau des documents
+$documents = array();
+if ( $documents_query->have_posts() ) {
+    while ( $documents_query->have_posts() ) {
+        $documents_query->the_post();
+        $post_id = get_the_ID();
+        
+        // Récupération des métadonnées
+        $categorie  = get_post_meta( $post_id, '_fvt_doc_categorie', true );
+        $format     = get_post_meta( $post_id, '_fvt_doc_format', true ) ?: 'PDF';
+        $taille     = get_post_meta( $post_id, '_fvt_doc_taille', true ) ?: '1 Mo';
+        $date       = get_post_meta( $post_id, '_fvt_doc_date', true ) ?: get_the_date( 'F Y' );
+        $url        = get_post_meta( $post_id, '_fvt_doc_url', true ) ?: '#';
+        $description = get_post_meta( $post_id, '_fvt_doc_description', true );
+        
+        $documents[] = array(
+            'id'          => $post_id,
+            'titre'       => get_the_title(),
+            'categorie'   => $categorie,
+            'format'      => $format,
+            'taille'      => $taille,
+            'date'        => $date,
+            'url'         => $url,
+            'description' => $description ?: '',
+            'icone'       => 'fa-file-pdf',
+        );
+    }
+    wp_reset_postdata();
+}
+
+// Fallback si aucun document n'est trouvé
+if ( empty( $documents ) ) {
+    $documents = array(
+        array(
+            'id'          => 1,
+            'titre'       => 'Plan stratégique 2026 TGF',
+            'categorie'   => 'plan',
+            'format'      => 'PDF',
+            'taille'      => '2.4 Mo',
+            'date'        => 'Janvier 2024',
+            'url'         => '#',
+            'description' => 'Document cadre définissant les orientations stratégiques du Togo Green Fund.',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'id'          => 2,
+            'titre'       => 'Politique anti fraude du Togo Green Fund',
+            'categorie'   => 'politique',
+            'format'      => 'PDF',
+            'taille'      => '1.9 Mo',
+            'date'        => 'Septembre 2024',
+            'url'         => '#',
+            'description' => 'La politique anti fraude du Togo Green Fund.',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'id'          => 3,
+            'titre'       => 'Décret n°2017-128 du 06 mai 2026 portant création du Togo Green Fund',
+            'categorie'   => 'decret',
+            'format'      => 'PDF',
+            'taille'      => '2.1 Mo',
+            'date'        => 'Novembre 2024',
+            'url'         => '#',
+            'description' => 'Décret de création du Togo Green Fund.',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'id'          => 4,
+            'titre'       => 'Plan stratégique du Togo Green Fund 2025-2030',
+            'categorie'   => 'plan',
+            'format'      => 'PDF',
+            'taille'      => '5.1 Mo',
+            'date'        => 'Décembre 2024',
+            'url'         => '#',
+            'description' => 'Orientations stratégiques et objectifs du Togo Green Fund pour la prochaine décennie.',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'id'          => 5,
+            'titre'       => 'Le mécanisme de règlement des griefs du TGF',
+            'categorie'   => 'mecanisme',
+            'format'      => 'PDF',
+            'taille'      => '4.2 Mo',
+            'date'        => 'Juin 2024',
+            'url'         => '#',
+            'description' => '',
+            'icone'       => 'fa-file-pdf',
+        ),
+    );
+}
 
 // Types de catégories pour le filtre
 $categories = array(
-	'tous'      => 'Tous',
-	'plan' 		=> 'Plan stratégique',
-	'politique' => 'Politique anti fraude',
-	'decret'    => 'Decret',
-	'mecanisme' => 'Mécanisme de règlement des griefs',
+    'tous'      => 'Tous',
+    'plan'      => 'Plan stratégique',
+    'politique' => 'Politique anti fraude',
+    'decret'    => 'Décret',
+    'mecanisme' => 'Mécanisme de règlement des griefs',
 );
 ?>
 
@@ -91,10 +130,10 @@ $categories = array(
 				<li class="current">Politiques et stratégies</li>
 			</ol>
 		</nav>
-		<span class="politiques-header__badge"><i class="fas fa-file-alt"></i> Togo Green Fund </span>
+		<span class="politiques-header__badge"><i class="fas fa-file-alt"></i> Togo Green Fund</span>
 		<h1>Politiques et stratégies</h1>
 		<div class="title-underline"></div>
-		<p class="politiques-header__sub">Consultez et téléchargez les documents stratégiques et politiques du Fonds Vert.</p>
+		<p class="politiques-header__sub">Consultez et téléchargez les documents stratégiques et politiques du Togo Green Fund.</p>
 	</div>
 </section>
 
@@ -106,7 +145,7 @@ $categories = array(
 
 		<!-- ===== INTRODUCTION ===== -->
 		<div class="politiques-intro">
-			<p>Le Fonds Vert du Togo s’appuie sur un cadre politique et stratégique solide pour orienter ses actions et garantir la transparence, l’efficacité et l’impact de ses interventions. Retrouvez ici l’ensemble des documents de référence.</p>
+			<p>Le Togo Green Fund du Togo s’appuie sur un cadre politique et stratégique solide pour orienter ses actions et garantir la transparence, l’efficacité et l’impact de ses interventions. Retrouvez ici l’ensemble des documents de référence.</p>
 		</div>
 
 		<!-- ===== BARRE DE FILTRES ===== -->
@@ -173,11 +212,11 @@ $categories = array(
 </section>
 
 <!-- ============================================================
-     STYLES CSS (intégrés)
+     STYLES CSS (intégrés – inchangés)
      ============================================================ -->
 <style>
 /* ============================================================
-   PAGE POLITIQUES ET STRATÉGIES – CHARTE FONDS VERT TOGO
+   PAGE POLITIQUES ET STRATÉGIES – CHARTE Togo Green Fund TOGO
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;

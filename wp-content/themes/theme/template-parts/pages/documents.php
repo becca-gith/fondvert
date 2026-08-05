@@ -1,101 +1,154 @@
 <?php
 /**
- * Template part : Page "Documents" – version statique
- * Fonds Vert du Togo
+ * Template part : Page "Documents" – version dynamique
+ * Récupère les documents depuis le Custom Post Type "document"
  *
- * @package FondsVertTogo
+ * @package TogoGreenFund
  */
 
-// Tableau des documents
-$documents = array(
-	array(
-		'titre'       => 'Rapport d\'activité 2024',
-		'description' => 'Bilan des projets financés, des résultats atteints et des perspectives pour l\'année à venir.',
-		'type'        => 'rapport',
-		'format'      => 'PDF',
-		'taille'      => '2.4 Mo',
-		'date'        => 'Janvier 2025',
-		'url'         => '#',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'titre'       => 'Guide du soumissionnaire',
-		'description' => 'Document complet pour préparer et soumettre un projet de financement climatique.',
-		'type'        => 'guide',
-		'format'      => 'PDF',
-		'taille'      => '1.8 Mo',
-		'date'        => 'Septembre 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-alt',
-	),
-	array(
-		'titre'       => 'Plan stratégique 2025-2030',
-		'description' => 'Orientations stratégiques du Fonds Vert pour la prochaine décennie.',
-		'type'        => 'rapport',
-		'format'      => 'PDF',
-		'taille'      => '3.1 Mo',
-		'date'        => 'Décembre 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'titre'       => 'Infographie : Financement climatique au Togo',
-		'description' => 'Synthèse visuelle des flux financiers et des projets soutenus.',
-		'type'        => 'publication',
-		'format'      => 'PNG',
-		'taille'      => '5.2 Mo',
-		'date'        => 'Octobre 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-image',
-	),
-	array(
-		'titre'       => 'Rapport d\'évaluation des projets 2023',
-		'description' => 'Évaluation de l\'impact des projets climatiques sur les communautés.',
-		'type'        => 'rapport',
-		'format'      => 'PDF',
-		'taille'      => '4.0 Mo',
-		'date'        => 'Mars 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'titre'       => 'Fiche technique : Agriculture durable',
-		'description' => 'Bonnes pratiques agricoles pour la résilience climatique.',
-		'type'        => 'guide',
-		'format'      => 'PDF',
-		'taille'      => '1.2 Mo',
-		'date'        => 'Août 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-alt',
-	),
-	array(
-		'titre'       => 'Brochure institutionnelle',
-		'description' => 'Présentation du Fonds Vert du Togo, sa mission et ses actions.',
-		'type'        => 'publication',
-		'format'      => 'PDF',
-		'taille'      => '3.5 Mo',
-		'date'        => 'Juin 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-pdf',
-	),
-	array(
-		'titre'       => 'Tableau de bord des indicateurs climatiques',
-		'description' => 'Suivi des indicateurs clés de performance environnementale.',
-		'type'        => 'publication',
-		'format'      => 'XLSX',
-		'taille'      => '1.6 Mo',
-		'date'        => 'Novembre 2024',
-		'url'         => '#',
-		'icone'       => 'fa-file-excel',
-	),
-);
+// Récupération des documents (CPT 'document')
+$documents_query = new WP_Query( array(
+    'post_type'      => 'document',
+    'posts_per_page' => -1,
+    'post_status'    => 'publish',
+    'orderby'        => 'menu_order',
+    'order'          => 'ASC',
+) );
+
+// Construction du tableau des documents
+$documents = array();
+if ( $documents_query->have_posts() ) {
+    while ( $documents_query->have_posts() ) {
+        $documents_query->the_post();
+        $post_id = get_the_ID();
+        
+        // Récupération des métadonnées
+        $type       = get_post_meta( $post_id, '_fvt_doc_type', true );
+        $format     = get_post_meta( $post_id, '_fvt_doc_format', true ) ?: 'PDF';
+        $taille     = get_post_meta( $post_id, '_fvt_doc_taille', true ) ?: '1 Mo';
+        $date       = get_post_meta( $post_id, '_fvt_doc_date', true ) ?: get_the_date( 'F Y' );
+        $url        = get_post_meta( $post_id, '_fvt_doc_url', true ) ?: '#';
+        $description = get_post_meta( $post_id, '_fvt_doc_description', true );
+        
+        // Déterminer l'icône en fonction du format
+        $icone = 'fa-file-pdf';
+        if ( strtolower( $format ) === 'png' || strtolower( $format ) === 'jpg' || strtolower( $format ) === 'jpeg' ) {
+            $icone = 'fa-file-image';
+        } elseif ( strtolower( $format ) === 'xlsx' || strtolower( $format ) === 'xls' ) {
+            $icone = 'fa-file-excel';
+        } elseif ( strtolower( $format ) === 'doc' || strtolower( $format ) === 'docx' ) {
+            $icone = 'fa-file-word';
+        } elseif ( strtolower( $format ) === 'zip' ) {
+            $icone = 'fa-file-archive';
+        }
+        
+        $documents[] = array(
+            'id'          => $post_id,
+            'titre'       => get_the_title(),
+            'description' => $description ?: '',
+            'type'        => $type,
+            'format'      => $format,
+            'taille'      => $taille,
+            'date'        => $date,
+            'url'         => $url,
+            'icone'       => $icone,
+        );
+    }
+    wp_reset_postdata();
+}
+
+// Fallback si aucun document n'est trouvé
+if ( empty( $documents ) ) {
+    $documents = array(
+        array(
+            'titre'       => 'Rapport d\'activité 2024',
+            'description' => 'Bilan des projets financés, des résultats atteints et des perspectives pour l\'année à venir.',
+            'type'        => 'rapport',
+            'format'      => 'PDF',
+            'taille'      => '2.4 Mo',
+            'date'        => 'Janvier 2025',
+            'url'         => '#',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'titre'       => 'Guide du soumissionnaire',
+            'description' => 'Document complet pour préparer et soumettre un projet de financement climatique.',
+            'type'        => 'guide',
+            'format'      => 'PDF',
+            'taille'      => '1.8 Mo',
+            'date'        => 'Septembre 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-alt',
+        ),
+        array(
+            'titre'       => 'Plan stratégique 2025-2030',
+            'description' => 'Orientations stratégiques du Fonds Vert pour la prochaine décennie.',
+            'type'        => 'rapport',
+            'format'      => 'PDF',
+            'taille'      => '3.1 Mo',
+            'date'        => 'Décembre 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'titre'       => 'Infographie : Financement climatique au Togo',
+            'description' => 'Synthèse visuelle des flux financiers et des projets soutenus.',
+            'type'        => 'publication',
+            'format'      => 'PNG',
+            'taille'      => '5.2 Mo',
+            'date'        => 'Octobre 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-image',
+        ),
+        array(
+            'titre'       => 'Rapport d\'évaluation des projets 2023',
+            'description' => 'Évaluation de l\'impact des projets climatiques sur les communautés.',
+            'type'        => 'rapport',
+            'format'      => 'PDF',
+            'taille'      => '4.0 Mo',
+            'date'        => 'Mars 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'titre'       => 'Fiche technique : Agriculture durable',
+            'description' => 'Bonnes pratiques agricoles pour la résilience climatique.',
+            'type'        => 'guide',
+            'format'      => 'PDF',
+            'taille'      => '1.2 Mo',
+            'date'        => 'Août 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-alt',
+        ),
+        array(
+            'titre'       => 'Brochure institutionnelle',
+            'description' => 'Présentation du Fonds Vert du Togo, sa mission et ses actions.',
+            'type'        => 'publication',
+            'format'      => 'PDF',
+            'taille'      => '3.5 Mo',
+            'date'        => 'Juin 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-pdf',
+        ),
+        array(
+            'titre'       => 'Tableau de bord des indicateurs climatiques',
+            'description' => 'Suivi des indicateurs clés de performance environnementale.',
+            'type'        => 'publication',
+            'format'      => 'XLSX',
+            'taille'      => '1.6 Mo',
+            'date'        => 'Novembre 2024',
+            'url'         => '#',
+            'icone'       => 'fa-file-excel',
+        ),
+    );
+}
 
 // Types de documents pour le filtre
 $types_doc = array(
-	'tous'       => 'Tous',
-	'rapport'    => 'Rapports',
-	'guide'      => 'Guides',
-	'publication' => 'Publications',
+    'tous'       => 'Tous',
+    'rapport'    => 'Rapports',
+    'guide'      => 'Guides',
+    'publication' => 'Publications',
 );
 ?>
 
@@ -113,7 +166,7 @@ $types_doc = array(
 				<li class="current">Documents</li>
 			</ol>
 		</nav>
-		<span class="documents-header__badge"><i class="fas fa-folder-open"></i> Togo Green Fund </span>
+		<span class="documents-header__badge"><i class="fas fa-folder-open"></i> Togo Green Fund</span>
 		<h1>Documents</h1>
 		<div class="title-underline"></div>
 		<p class="documents-header__sub">Consultez et téléchargez nos rapports, guides et publications.</p>
@@ -189,7 +242,7 @@ $types_doc = array(
 </section>
 
 <!-- ============================================================
-     STYLES CSS (intégrés)
+     STYLES CSS (intégrés – inchangés)
      ============================================================ -->
 <style>
 /* ============================================================

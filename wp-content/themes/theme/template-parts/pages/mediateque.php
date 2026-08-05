@@ -1,109 +1,159 @@
 <?php
 /**
- * Template part : Page "Médiathèque" – version statique
- * Fonds Vert du Togo
+ * Template part : Page "Médiathèque" – version dynamique corrigée
+ * Récupère les médias depuis le Custom Post Type "media"
  *
- * @package FondsVertTogo
+ * @package TogoGreenFund
  */
 
-// Données de la médiathèque
-$medias = array(
-	// Photos
-	array(
-		'id'     => 1,
-		'titre'  => 'Agriculture résiliente dans les Savanes',
-		'type'   => 'photo',
-		'format' => 'jpg',
-		'date'   => '15 janvier 2025',
-		'url'    => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&h=400&fit=crop',
-		'mini'   => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=300&h=200&fit=crop',
-		'desc'   => 'Visite de terrain dans la région des Savanes pour le projet agricole.',
-	),
-	array(
-		'id'     => 2,
-		'titre'  => 'Panneaux solaires installés',
-		'type'   => 'photo',
-		'format' => 'jpg',
-		'date'   => '12 février 2025',
-		'url'    => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop',
-		'mini'   => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=300&h=200&fit=crop',
-		'desc'   => 'Installation de panneaux solaires dans un village de la région Maritime.',
-	),
-	array(
-		'id'     => 3,
-		'titre'  => 'Atelier de formation des agriculteurs',
-		'type'   => 'photo',
-		'format' => 'jpg',
-		'date'   => '20 mars 2025',
-		'url'    => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=600&h=400&fit=crop',
-		'mini'   => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=300&h=200&fit=crop',
-		'desc'   => 'Formation sur les techniques agricoles durables.',
-	),
-	array(
-		'id'     => 4,
-		'titre'  => 'Projet de reboisement',
-		'type'   => 'photo',
-		'format' => 'jpg',
-		'date'   => '5 avril 2025',
-		'url'    => 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&h=400&fit=crop',
-		'mini'   => 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=300&h=200&fit=crop',
-		'desc'   => 'Campagne de reboisement dans la région des Plateaux.',
-	),
-	// Vidéos
-	array(
-		'id'     => 5,
-		'titre'  => 'Présentation du Fonds Vert du Togo',
-		'type'   => 'video',
-		'format' => 'youtube',
-		'date'   => '8 janvier 2025',
-		'url'    => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-		'mini'   => 'https://img.youtube.com/vi/dQw4w9WgXcq/hqdefault.jpg',
-		'desc'   => 'Vidéo institutionnelle présentant la mission et les actions du Fonds Vert.',
-	),
-	array(
-		'id'     => 6,
-		'titre'  => 'Témoignage d\'un bénéficiaire',
-		'type'   => 'video',
-		'format' => 'youtube',
-		'date'   => '22 février 2025',
-		'url'    => 'https://www.youtube.com/embed/9bZkp7q19f0',
-		'mini'   => 'https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg',
-		'desc'   => 'Un agriculteur témoigne des bénéfices du projet d\'agriculture résiliente.',
-	),
-	// Documents
-	array(
-		'id'     => 7,
-		'titre'  => 'Brochure institutionnelle',
-		'type'   => 'document',
-		'format' => 'pdf',
-		'date'   => '15 décembre 2024',
-		'url'    => '#',
-		'mini'   => 'https://via.placeholder.com/300x200/e8f5ec/0a6e3e?text=PDF',
-		'desc'   => 'Présentation du Fonds Vert (PDF, 3.2 Mo)',
-	),
-	array(
-		'id'     => 8,
-		'titre'  => 'Rapport d\'activité 2024',
-		'type'   => 'document',
-		'format' => 'pdf',
-		'date'   => '20 janvier 2025',
-		'url'    => '#',
-		'mini'   => 'https://via.placeholder.com/300x200/e8f5ec/0a6e3e?text=PDF',
-		'desc'   => 'Rapport annuel complet (PDF, 4.8 Mo)',
-	),
-);
+// ---------- FONCTION DE CONVERSION YOUTUBE ----------
+function fvt_convert_youtube_url( $url ) {
+    // Si c'est déjà une URL embed, on la retourne
+    if ( strpos( $url, 'youtube.com/embed' ) !== false ) {
+        return $url;
+    }
+    // Extraire l'ID vidéo depuis une URL standard
+    parse_str( parse_url( $url, PHP_URL_QUERY ), $query );
+    if ( isset( $query['v'] ) ) {
+        return 'https://www.youtube.com/embed/' . $query['v'];
+    }
+    // Fallback : retourner l'URL inchangée
+    return $url;
+}
+// ----------------------------------------------------
+
+// Récupération des médias (CPT 'media')
+$medias_query = new WP_Query( array(
+    'post_type'      => 'media',
+    'posts_per_page' => -1,
+    'post_status'    => 'publish',
+    'orderby'        => 'menu_order',
+    'order'          => 'ASC',
+) );
+
+// Construction du tableau des médias
+$medias = array();
+if ( $medias_query->have_posts() ) {
+    while ( $medias_query->have_posts() ) {
+        $medias_query->the_post();
+        $post_id = get_the_ID();
+        
+        // Récupération des métadonnées
+        $type       = get_post_meta( $post_id, '_fvt_media_type', true );
+        $format     = get_post_meta( $post_id, '_fvt_media_format', true );
+        $date       = get_post_meta( $post_id, '_fvt_media_date', true ) ?: get_the_date( 'd F Y' );
+        $url        = get_post_meta( $post_id, '_fvt_media_url', true ) ?: '#';
+        $mini_url   = get_post_meta( $post_id, '_fvt_media_mini', true );
+        $desc       = get_post_meta( $post_id, '_fvt_media_description', true );
+        
+        // ---- CONVERSION YOUTUBE (si vidéo) ----
+        if ( $type === 'video' ) {
+            $url = fvt_convert_youtube_url( $url );
+        }
+        // ---- FIN CONVERSION ----
+        
+        // Fallback pour la miniature
+        if ( empty( $mini_url ) ) {
+            if ( $type === 'video' ) {
+                // Extraire l'ID YouTube pour la miniature
+                preg_match( '/embed\/([^?]+)/', $url, $matches );
+                $video_id = $matches[1] ?? 'dQw4w9WgXcQ';
+                $mini_url = 'https://img.youtube.com/vi/' . $video_id . '/hqdefault.jpg';
+            } else {
+                $mini_url = 'https://via.placeholder.com/300x200/e8f5ec/0a6e3e?text=' . ucfirst( $type );
+            }
+        }
+        
+        $medias[] = array(
+            'id'     => $post_id,
+            'titre'  => get_the_title(),
+            'type'   => $type,
+            'format' => $format ?: ( $type === 'photo' ? 'jpg' : ( $type === 'video' ? 'youtube' : 'pdf' ) ),
+            'date'   => $date,
+            'url'    => $url,   // URL maintenant convertie
+            'mini'   => $mini_url,
+            'desc'   => $desc ?: '',
+        );
+    }
+    wp_reset_postdata();
+}
+
+// Fallback si aucun média n'est trouvé
+if ( empty( $medias ) ) {
+    $medias = array(
+        // Photos
+        array(
+            'id'     => 1,
+            'titre'  => 'Agriculture résiliente dans les Savanes',
+            'type'   => 'photo',
+            'format' => 'jpg',
+            'date'   => '15 janvier 2025',
+            'url'    => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&h=400&fit=crop',
+            'mini'   => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=300&h=200&fit=crop',
+            'desc'   => 'Visite de terrain dans la région des Savanes pour le projet agricole.',
+        ),
+        array(
+            'id'     => 2,
+            'titre'  => 'Panneaux solaires installés',
+            'type'   => 'photo',
+            'format' => 'jpg',
+            'date'   => '12 février 2025',
+            'url'    => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop',
+            'mini'   => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=300&h=200&fit=crop',
+            'desc'   => 'Installation de panneaux solaires dans un village de la région Maritime.',
+        ),
+        array(
+            'id'     => 3,
+            'titre'  => 'Atelier de formation des agriculteurs',
+            'type'   => 'photo',
+            'format' => 'jpg',
+            'date'   => '20 mars 2025',
+            'url'    => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=600&h=400&fit=crop',
+            'mini'   => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=300&h=200&fit=crop',
+            'desc'   => 'Formation sur les techniques agricoles durables.',
+        ),
+        // Vidéos (avec URLs à convertir)
+        array(
+            'id'     => 5,
+            'titre'  => 'Présentation du Togo Green Fund du Togo',
+            'type'   => 'video',
+            'format' => 'youtube',
+            'date'   => '8 janvier 2025',
+            'url'    => 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // URL standard
+            'mini'   => 'https://img.youtube.com/vi/dQw4w9WgXcq/hqdefault.jpg',
+            'desc'   => 'Vidéo institutionnelle présentant la mission et les actions du Togo Green Fund.',
+        ),
+        // Documents
+        array(
+            'id'     => 7,
+            'titre'  => 'Brochure institutionnelle',
+            'type'   => 'document',
+            'format' => 'pdf',
+            'date'   => '15 décembre 2024',
+            'url'    => '#',
+            'mini'   => 'https://via.placeholder.com/300x200/e8f5ec/0a6e3e?text=PDF',
+            'desc'   => 'Présentation du Togo Green Fund (PDF, 3.2 Mo)',
+        ),
+    );
+    // Convertir aussi les fallbacks si nécessaire
+    foreach ( $medias as &$media ) {
+        if ( $media['type'] === 'video' ) {
+            $media['url'] = fvt_convert_youtube_url( $media['url'] );
+        }
+    }
+}
 
 // Types pour le filtre
 $types_medias = array(
-	'tous'    => 'Tous',
-	'photo'   => 'Photos',
-	'video'   => 'Vidéos',
-	'document' => 'Documents',
+    'tous'    => 'Tous',
+    'photo'   => 'Photos',
+    'video'   => 'Vidéos',
+    'document' => 'Documents',
 );
 ?>
 
 <!-- ============================================================
-     EN‑TÊTE : BREADCRUMB + TITRE
+     EN‑TÊTE : BREADCRUMB + TITRE (inchangé)
      ============================================================ -->
 <section class="mediatheque-header">
 	<div class="container">
@@ -116,10 +166,10 @@ $types_medias = array(
 				<li class="current">Médiathèque</li>
 			</ol>
 		</nav>
-		<span class="mediatheque-header__badge"><i class="fas fa-photo-video"></i> Togo Green Fund </span>
+		<span class="mediatheque-header__badge"><i class="fas fa-photo-video"></i> Togo Green Fund</span>
 		<h1>Médiathèque</h1>
 		<div class="title-underline"></div>
-		<p class="mediatheque-header__sub">Photos, vidéos et documents – explorez toutes les ressources du Fonds Vert.</p>
+		<p class="mediatheque-header__sub">Photos, vidéos et documents – explorez toutes les ressources du Togo Green Fund.</p>
 	</div>
 </section>
 
@@ -196,14 +246,16 @@ $types_medias = array(
 </section>
 
 <!-- ============================================================
-     MODALE VIDÉO
+     MODALE VIDÉO (avec attributs allow)
      ============================================================ -->
 <div class="video-modal" id="videoModal">
 	<div class="video-modal__overlay" id="videoModalOverlay"></div>
 	<div class="video-modal__content">
 		<button class="video-modal__close" id="videoModalClose">&times;</button>
 		<div class="video-modal__embed">
-			<iframe id="videoIframe" src="" frameborder="0" allowfullscreen></iframe>
+			<iframe id="videoIframe" src="" frameborder="0" 
+			        allow="autoplay; encrypted-media; fullscreen" 
+			        allowfullscreen></iframe>
 		</div>
 	</div>
 </div>
@@ -223,11 +275,11 @@ $types_medias = array(
 </section>
 
 <!-- ============================================================
-     STYLES CSS (intégrés)
+     STYLES CSS (inchangés)
      ============================================================ -->
 <style>
 /* ============================================================
-   PAGE MÉDIATHÈQUE – CHARTE FONDS VERT TOGO
+   PAGE MÉDIATHÈQUE – CHARTE Togo Green Fund TOGO
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;
@@ -678,7 +730,7 @@ $types_medias = array(
 </style>
 
 <!-- ============================================================
-     SCRIPTS (filtrage + modale vidéo)
+     SCRIPTS (filtrage + modale vidéo corrigée)
      ============================================================ -->
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
@@ -718,7 +770,7 @@ $types_medias = array(
 		typeSelect.addEventListener('change', filterMedias);
 		filterMedias();
 
-		// ---- MODALE VIDÉO ----
+		// ---- MODALE VIDÉO (corrigée) ----
 		const modal = document.getElementById('videoModal');
 		const overlay = document.getElementById('videoModalOverlay');
 		const closeBtn = document.getElementById('videoModalClose');
@@ -728,8 +780,10 @@ $types_medias = array(
 		videoBtns.forEach(function(btn) {
 			btn.addEventListener('click', function(e) {
 				e.preventDefault();
-				const videoSrc = this.dataset.video;
-				iframe.src = videoSrc + '?autoplay=1';
+				let videoSrc = this.dataset.video;
+				// Si l'URL contient déjà des paramètres, ajouter &autoplay=1, sinon ?autoplay=1
+				const separator = videoSrc.includes('?') ? '&' : '?';
+				iframe.src = videoSrc + separator + 'autoplay=1&rel=0';
 				modal.classList.add('is-open');
 				document.body.style.overflow = 'hidden';
 			});
@@ -737,6 +791,7 @@ $types_medias = array(
 
 		function closeModal() {
 			modal.classList.remove('is-open');
+			// Arrêter la vidéo en vidant la source
 			iframe.src = '';
 			document.body.style.overflow = '';
 		}

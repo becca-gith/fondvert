@@ -689,7 +689,7 @@
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet' ) ); ?>">Projets</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projets' ) ); ?>">Projets</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet2' ) ); ?>">Projets</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>">Soumettre un projet</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'suivre' ) ); ?>">Suivre une soummission</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grands-projets' ) ); ?>">Grands Projets climat</a></li>
@@ -701,19 +701,19 @@
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet' ) ); ?>">Guichets</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'agriculture-durable' ) ); ?>">Agriculture Durable</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'foret-et-biodiversite' ) ); ?>">Forêt et Biodiversité</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'eau-et-assainissement' ) ); ?>">Eau et Assainissement</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructures Durables</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-agriculture' ) ); ?>">Agriculture Durable</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-foret' ) ); ?>">Forêt et Biodiversité</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-eau' ) ); ?>">Eau et Assainissement</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-energie' ) ); ?>">Énergie et Infrastructures Durables</a></li>
                         </ul>
                     </li>
 
                     <li class="dropdown">
                         <a href="<?php echo esc_url( get_permalink( get_option( 'page_for_posts' ) ) ); ?>">Actualités</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'communique-officiel' ) ); ?>">Communiqués Officiels</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'communiques-officiels' ) ); ?>">Communiqués Officiels</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'infos' ) ); ?>">Infos</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'evenement' ) ); ?>">Évènements</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'evenements' ) ); ?>">Évènements</a></li>
                         </ul>
                     </li>
 
