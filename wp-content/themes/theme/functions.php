@@ -1253,6 +1253,452 @@ function fvt_handle_soumission() {
 }
 add_action( 'admin_post_nopriv_fvt_soumission', 'fvt_handle_soumission' );
 add_action( 'admin_post_fvt_soumission', 'fvt_handle_soumission' );
+
+
+// ======================================================
+// CPT : GRIEFS (Plaintes)
+// ======================================================
+
+function fvt_cpt_grief() {
+    $labels = array(
+        'name'               => 'Griefs / Plaintes',
+        'singular_name'      => 'Grief',
+        'add_new'            => 'Ajouter un grief',
+        'add_new_item'       => 'Ajouter un nouveau grief',
+        'edit_item'          => 'Modifier',
+        'new_item'           => 'Nouveau grief',
+        'view_item'          => 'Voir',
+        'search_items'       => 'Rechercher',
+        'not_found'          => 'Aucun grief',
+        'not_found_in_trash' => 'Aucun grief dans la corbeille',
+        'all_items'          => 'Tous les griefs',
+    );
+    $args = array(
+        'labels'              => $labels,
+        'public'              => false,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'menu_icon'           => 'dashicons-warning',
+        'supports'            => array( 'title', 'editor' ),
+        'menu_position'       => 36,
+        'capability_type'     => 'post',
+        'capabilities'        => array(
+            'create_posts' => 'do_not_allow',
+        ),
+        'map_meta_cap'        => true,
+    );
+    register_post_type( 'grief', $args );
+}
+add_action( 'init', 'fvt_cpt_grief' );
+
+// ===== COLONNES ADMIN =====
+function fvt_grief_admin_columns( $columns ) {
+    $new_columns = array();
+    foreach ( $columns as $key => $value ) {
+        if ( $key === 'title' ) {
+            $new_columns['reference'] = 'Référence';
+        }
+        $new_columns[ $key ] = $value;
+        if ( $key === 'date' ) {
+            $new_columns['nom'] = 'Nom';
+            $new_columns['email'] = 'Email';
+            $new_columns['type_grief'] = 'Type de grief';
+            $new_columns['statut_grief'] = 'Statut';
+            $new_columns['document'] = 'Document';
+        }
+    }
+    return $new_columns;
+}
+add_filter( 'manage_grief_posts_columns', 'fvt_grief_admin_columns' );
+
+function fvt_grief_admin_column_content( $column, $post_id ) {
+    $meta = get_post_meta( $post_id );
+    switch ( $column ) {
+        case 'reference':
+            echo esc_html( get_post_meta( $post_id, '_grief_reference', true ) );
+            break;
+        case 'nom':
+            echo esc_html( ( $meta['_grief_prenom'][0] ?? '' ) . ' ' . ( $meta['_grief_nom'][0] ?? '' ) );
+            break;
+        case 'email':
+            echo esc_html( $meta['_grief_email'][0] ?? '' );
+            break;
+        case 'type_grief':
+            echo esc_html( $meta['_grief_type'][0] ?? '' );
+            break;
+        case 'statut_grief':
+            $statut = $meta['_grief_statut'][0] ?? 'en_attente';
+            $labels = array(
+                'en_attente' => 'En attente',
+                'en_cours'   => 'En cours',
+                'traite'     => 'Traité',
+                'rejete'     => 'Rejeté',
+            );
+            $class = 'statut-' . $statut;
+            echo '<span class="' . esc_attr( $class ) . '" style="padding:3px 12px; border-radius:12px; font-size:11px; font-weight:600; display:inline-block; background:#e0e0e0; color:#333;">' . esc_html( $labels[ $statut ] ?? $statut ) . '</span>';
+            break;
+        case 'document':
+            $file_id = get_post_meta( $post_id, '_grief_fichier', true );
+            if ( $file_id ) {
+                $file_url = wp_get_attachment_url( $file_id );
+                if ( $file_url ) {
+                    echo '<a href="' . esc_url( $file_url ) . '" target="_blank" class="button button-small">Télécharger</a>';
+                } else {
+                    echo '—';
+                }
+            } else {
+                echo '—';
+            }
+            break;
+    }
+}
+add_action( 'manage_grief_posts_custom_column', 'fvt_grief_admin_column_content', 10, 2 );
+
+// ===== STYLES POUR LE STATUT DANS L'ADMIN =====
+add_action( 'admin_head', 'fvt_grief_admin_styles' );
+function fvt_grief_admin_styles() {
+    echo '<style>
+        .statut-en_attente { background: #fff3cd !important; color: #856404 !important; }
+        .statut-en_cours { background: #cce5ff !important; color: #004085 !important; }
+        .statut-traite { background: #d4edda !important; color: #155724 !important; }
+        .statut-rejete { background: #f8d7da !important; color: #721c24 !important; }
+    </style>';
+}
+
+// ===== LIEN DE TÉLÉCHARGEMENT DANS LA PAGE D'ÉDITION =====
+add_filter( 'the_content', 'fvt_grief_content_document_link' );
+function fvt_grief_content_document_link( $content ) {
+    if ( is_admin() && get_post_type() === 'grief' ) {
+        $file_id = get_post_meta( get_the_ID(), '_grief_fichier', true );
+        if ( $file_id ) {
+            $file_url = wp_get_attachment_url( $file_id );
+            if ( $file_url ) {
+                $content .= '<p><strong>📎 Document joint :</strong> <a href="' . esc_url( $file_url ) . '" target="_blank" class="button">Télécharger le document</a></p>';
+            }
+        }
+        // Ajout du statut actuel
+        $statut = get_post_meta( get_the_ID(), '_grief_statut', true );
+        $labels = array(
+            'en_attente' => 'En attente',
+            'en_cours'   => 'En cours',
+            'traite'     => 'Traité',
+            'rejete'     => 'Rejeté',
+        );
+        if ( $statut ) {
+            $content .= '<p><strong>Statut :</strong> ' . esc_html( $labels[ $statut ] ?? $statut ) . '</p>';
+        }
+    }
+    return $content;
+}
+
+// ===== TRAITEMENT DU FORMULAIRE DE GRIEF =====
+function fvt_handle_grief() {
+    if ( ! isset( $_POST['fvt_grief_nonce'] ) || ! wp_verify_nonce( $_POST['fvt_grief_nonce'], 'fvt_grief_action' ) ) {
+        wp_redirect( add_query_arg( 'grief_error', '4', wp_get_referer() ) );
+        exit;
+    }
+
+    $required = array( 'nom', 'prenom', 'email', 'telephone', 'type_grief', 'description' );
+    foreach ( $required as $field ) {
+        if ( empty( $_POST[ $field ] ) ) {
+            wp_redirect( add_query_arg( 'grief_error', '1', wp_get_referer() ) );
+            exit;
+        }
+    }
+
+    if ( empty( $_POST['consent'] ) ) {
+        wp_redirect( add_query_arg( 'grief_error', '2', wp_get_referer() ) );
+        exit;
+    }
+
+    $nom         = sanitize_text_field( $_POST['nom'] );
+    $prenom      = sanitize_text_field( $_POST['prenom'] );
+    $email       = sanitize_email( $_POST['email'] );
+    $telephone   = sanitize_text_field( $_POST['telephone'] );
+    $type_grief  = sanitize_text_field( $_POST['type_grief'] );
+    $description = sanitize_textarea_field( $_POST['description'] );
+    $statut      = 'en_attente';
+
+    // Vérifier si l'utilisateur souhaite rester anonyme
+    $anonyme = isset( $_POST['anonyme'] ) ? true : false;
+    if ( $anonyme ) {
+        $nom    = 'Anonyme';
+        $prenom = '';
+        $email  = '';
+    }
+
+    $reference = 'GRI-' . date('Y') . '-' . str_pad( mt_rand( 1, 9999 ), 4, '0', STR_PAD_LEFT );
+
+    $post_id = wp_insert_post( array(
+        'post_title'   => 'Grief ' . $reference,
+        'post_content' => $description,
+        'post_status'  => 'publish',
+        'post_type'    => 'grief',
+    ) );
+
+    if ( is_wp_error( $post_id ) ) {
+        wp_redirect( add_query_arg( 'grief_error', '3', wp_get_referer() ) );
+        exit;
+    }
+
+    update_post_meta( $post_id, '_grief_reference', $reference );
+    update_post_meta( $post_id, '_grief_nom', $nom );
+    update_post_meta( $post_id, '_grief_prenom', $prenom );
+    update_post_meta( $post_id, '_grief_email', $email );
+    update_post_meta( $post_id, '_grief_telephone', $telephone );
+    update_post_meta( $post_id, '_grief_type', $type_grief );
+    update_post_meta( $post_id, '_grief_statut', $statut );
+    update_post_meta( $post_id, '_grief_anonyme', $anonyme );
+    update_post_meta( $post_id, '_grief_consent', 1 );
+
+    // Upload du fichier
+    if ( isset( $_FILES['fichier'] ) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK ) {
+        $upload = wp_handle_upload( $_FILES['fichier'], array( 'test_form' => false ) );
+        if ( ! isset( $upload['error'] ) ) {
+            $attachment_id = wp_insert_attachment( array(
+                'post_title'     => 'Fichier grief ' . $reference,
+                'post_content'   => '',
+                'post_status'    => 'inherit',
+                'post_mime_type' => $upload['type'],
+            ), $upload['file'], $post_id );
+            if ( ! is_wp_error( $attachment_id ) ) {
+                require_once ABSPATH . 'wp-admin/includes/image.php';
+                $attachment_data = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+                wp_update_attachment_metadata( $attachment_id, $attachment_data );
+                update_post_meta( $post_id, '_grief_fichier', $attachment_id );
+            }
+        }
+    }
+
+    // Email de confirmation (si non anonyme)
+    if ( ! $anonyme && ! empty( $email ) ) {
+        wp_mail( $email, 'Confirmation de dépôt de grief - Togo Green Fund',
+            "Bonjour $prenom $nom,\n\nNous avons bien reçu votre dépôt de grief.\nVotre numéro de référence est : $reference\n\nNotre équipe examinera votre dossier et vous recontactera dans les meilleurs délais.\n\nCordialement,\nL'équipe du Togo Green Fund" );
+    }
+
+    wp_redirect( add_query_arg( 'grief_success', $reference, wp_get_referer() ) );
+    exit;
+}
+add_action( 'admin_post_nopriv_fvt_grief', 'fvt_handle_grief' );
+add_action( 'admin_post_fvt_grief', 'fvt_handle_grief' );
+
+// ======================================================
+// CPT : PLAINTES
+// ======================================================
+
+function fvt_cpt_plainte() {
+    $labels = array(
+        'name'               => 'Plaintes',
+        'singular_name'      => 'Plainte',
+        'add_new'            => 'Ajouter une plainte',
+        'add_new_item'       => 'Ajouter une nouvelle plainte',
+        'edit_item'          => 'Modifier',
+        'new_item'           => 'Nouvelle plainte',
+        'view_item'          => 'Voir',
+        'search_items'       => 'Rechercher',
+        'not_found'          => 'Aucune plainte',
+        'not_found_in_trash' => 'Aucune plainte dans la corbeille',
+        'all_items'          => 'Toutes les plaintes',
+    );
+    $args = array(
+        'labels'              => $labels,
+        'public'              => false,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'menu_icon'           => 'dashicons-warning',
+        'supports'            => array( 'title', 'editor' ),
+        'menu_position'       => 36,
+        'capability_type'     => 'post',
+        'capabilities'        => array(
+            'create_posts' => 'do_not_allow', // empêche la création manuelle
+        ),
+        'map_meta_cap'        => true,
+    );
+    register_post_type( 'plainte', $args );
+}
+add_action( 'init', 'fvt_cpt_plainte' );
+
+// ===== COLONNES ADMIN =====
+function fvt_plainte_admin_columns( $columns ) {
+    $new_columns = array();
+    foreach ( $columns as $key => $value ) {
+        if ( $key === 'title' ) {
+            $new_columns['reference'] = 'Référence';
+        }
+        $new_columns[ $key ] = $value;
+        if ( $key === 'date' ) {
+            $new_columns['nom'] = 'Nom';
+            $new_columns['email'] = 'Email';
+            $new_columns['type_plainte'] = 'Type de plainte';
+            $new_columns['statut_plainte'] = 'Statut';
+            $new_columns['document'] = 'Document';
+        }
+    }
+    return $new_columns;
+}
+add_filter( 'manage_plainte_posts_columns', 'fvt_plainte_admin_columns' );
+
+function fvt_plainte_admin_column_content( $column, $post_id ) {
+    $meta = get_post_meta( $post_id );
+    switch ( $column ) {
+        case 'reference':
+            echo esc_html( get_post_meta( $post_id, '_plainte_reference', true ) );
+            break;
+        case 'nom':
+            echo esc_html( ( $meta['_plainte_prenom'][0] ?? '' ) . ' ' . ( $meta['_plainte_nom'][0] ?? '' ) );
+            break;
+        case 'email':
+            echo esc_html( $meta['_plainte_email'][0] ?? '' );
+            break;
+        case 'type_plainte':
+            echo esc_html( $meta['_plainte_type'][0] ?? '' );
+            break;
+        case 'statut_plainte':
+            $statut = $meta['_plainte_statut'][0] ?? 'en_attente';
+            $labels = array(
+                'en_attente' => 'En attente',
+                'en_cours'   => 'En cours',
+                'traite'     => 'Traité',
+                'rejete'     => 'Rejeté',
+            );
+            $class = 'statut-' . $statut;
+            echo '<span class="' . esc_attr( $class ) . '" style="padding:3px 12px; border-radius:12px; font-size:11px; font-weight:600; display:inline-block; background:#e0e0e0; color:#333;">' . esc_html( $labels[ $statut ] ?? $statut ) . '</span>';
+            break;
+        case 'document':
+            $file_id = get_post_meta( $post_id, '_plainte_fichier', true );
+            if ( $file_id ) {
+                $file_url = wp_get_attachment_url( $file_id );
+                if ( $file_url ) {
+                    echo '<a href="' . esc_url( $file_url ) . '" target="_blank" class="button button-small">Télécharger</a>';
+                } else {
+                    echo '—';
+                }
+            } else {
+                echo '—';
+            }
+            break;
+    }
+}
+add_action( 'manage_plainte_posts_custom_column', 'fvt_plainte_admin_column_content', 10, 2 );
+
+// ===== STYLES POUR LE STATUT =====
+add_action( 'admin_head', 'fvt_plainte_admin_styles' );
+function fvt_plainte_admin_styles() {
+    echo '<style>
+        .statut-en_attente { background: #fff3cd !important; color: #856404 !important; }
+        .statut-en_cours { background: #cce5ff !important; color: #004085 !important; }
+        .statut-traite { background: #d4edda !important; color: #155724 !important; }
+        .statut-rejete { background: #f8d7da !important; color: #721c24 !important; }
+    </style>';
+}
+
+// ===== LIEN DE TÉLÉCHARGEMENT DANS LA PAGE D'ÉDITION =====
+add_filter( 'the_content', 'fvt_plainte_content_document_link' );
+function fvt_plainte_content_document_link( $content ) {
+    if ( is_admin() && get_post_type() === 'plainte' ) {
+        $file_id = get_post_meta( get_the_ID(), '_plainte_fichier', true );
+        if ( $file_id ) {
+            $file_url = wp_get_attachment_url( $file_id );
+            if ( $file_url ) {
+                $content .= '<p><strong>📎 Document joint :</strong> <a href="' . esc_url( $file_url ) . '" target="_blank" class="button">Télécharger le document</a></p>';
+            }
+        }
+        $statut = get_post_meta( get_the_ID(), '_plainte_statut', true );
+        $labels = array(
+            'en_attente' => 'En attente',
+            'en_cours'   => 'En cours',
+            'traite'     => 'Traité',
+            'rejete'     => 'Rejeté',
+        );
+        if ( $statut ) {
+            $content .= '<p><strong>Statut :</strong> ' . esc_html( $labels[ $statut ] ?? $statut ) . '</p>';
+        }
+    }
+    return $content;
+}
+
+// ===== TRAITEMENT DU FORMULAIRE =====
+function fvt_handle_plainte() {
+    if ( ! isset( $_POST['fvt_plainte_nonce'] ) || ! wp_verify_nonce( $_POST['fvt_plainte_nonce'], 'fvt_plainte_action' ) ) {
+        wp_redirect( add_query_arg( 'plainte_error', '4', wp_get_referer() ) );
+        exit;
+    }
+
+    $required = array( 'type_plainte', 'description', 'nom', 'prenom', 'email' );
+    foreach ( $required as $field ) {
+        if ( empty( $_POST[ $field ] ) ) {
+            wp_redirect( add_query_arg( 'plainte_error', '1', wp_get_referer() ) );
+            exit;
+        }
+    }
+
+    if ( empty( $_POST['consent'] ) ) {
+        wp_redirect( add_query_arg( 'plainte_error', '2', wp_get_referer() ) );
+        exit;
+    }
+
+    $type_plainte = sanitize_text_field( $_POST['type_plainte'] );
+    $projet       = isset( $_POST['projet'] ) ? sanitize_text_field( $_POST['projet'] ) : '';
+    $description  = sanitize_textarea_field( $_POST['description'] );
+    $nom          = sanitize_text_field( $_POST['nom'] );
+    $prenom       = sanitize_text_field( $_POST['prenom'] );
+    $email        = sanitize_email( $_POST['email'] );
+    $telephone    = isset( $_POST['telephone'] ) ? sanitize_text_field( $_POST['telephone'] ) : '';
+    $organisation = isset( $_POST['organisation'] ) ? sanitize_text_field( $_POST['organisation'] ) : '';
+
+    $reference = 'PLA-' . date('Y') . '-' . str_pad( mt_rand( 1, 9999 ), 4, '0', STR_PAD_LEFT );
+
+    $post_id = wp_insert_post( array(
+        'post_title'   => 'Plainte ' . $reference,
+        'post_content' => $description,
+        'post_status'  => 'publish',
+        'post_type'    => 'plainte',
+    ) );
+
+    if ( is_wp_error( $post_id ) ) {
+        wp_redirect( add_query_arg( 'plainte_error', '3', wp_get_referer() ) );
+        exit;
+    }
+
+    update_post_meta( $post_id, '_plainte_reference', $reference );
+    update_post_meta( $post_id, '_plainte_type', $type_plainte );
+    update_post_meta( $post_id, '_plainte_projet', $projet );
+    update_post_meta( $post_id, '_plainte_nom', $nom );
+    update_post_meta( $post_id, '_plainte_prenom', $prenom );
+    update_post_meta( $post_id, '_plainte_email', $email );
+    update_post_meta( $post_id, '_plainte_telephone', $telephone );
+    update_post_meta( $post_id, '_plainte_organisation', $organisation );
+    update_post_meta( $post_id, '_plainte_statut', 'en_attente' );
+    update_post_meta( $post_id, '_plainte_consent', 1 );
+
+    // Upload du fichier
+    if ( isset( $_FILES['fichier'] ) && $_FILES['fichier']['error'] === UPLOAD_ERR_OK ) {
+        $upload = wp_handle_upload( $_FILES['fichier'], array( 'test_form' => false ) );
+        if ( ! isset( $upload['error'] ) ) {
+            $attachment_id = wp_insert_attachment( array(
+                'post_title'     => 'Fichier plainte ' . $reference,
+                'post_content'   => '',
+                'post_status'    => 'inherit',
+                'post_mime_type' => $upload['type'],
+            ), $upload['file'], $post_id );
+            if ( ! is_wp_error( $attachment_id ) ) {
+                require_once ABSPATH . 'wp-admin/includes/image.php';
+                $attachment_data = wp_generate_attachment_metadata( $attachment_id, $upload['file'] );
+                wp_update_attachment_metadata( $attachment_id, $attachment_data );
+                update_post_meta( $post_id, '_plainte_fichier', $attachment_id );
+            }
+        }
+    }
+
+    // Email de confirmation
+    wp_mail( $email, 'Confirmation de dépôt de plainte - Togo Green Fund',
+        "Bonjour $prenom $nom,\n\nNous avons bien reçu votre plainte.\nVotre numéro de référence est : $reference\n\nNotre équipe examinera votre dossier et vous recontactera dans les meilleurs délais.\n\nCordialement,\nL'équipe du Togo Green Fund" );
+
+    wp_redirect( add_query_arg( 'plainte_success', $reference, wp_get_referer() ) );
+    exit;
+}
+add_action( 'admin_post_nopriv_fvt_plainte', 'fvt_handle_plainte' );
+add_action( 'admin_post_fvt_plainte', 'fvt_handle_plainte' );
 // ======================================================
 // FIN DU FICHIER
 // ======================================================
