@@ -1,151 +1,81 @@
 <?php
 /**
- * Template part : Page "Suivi de soumission" – version statique
- * Fonds Vert du Togo
+ * Template part : Page "Suivi de soumission" – dynamique
+ * Récupère les soumissions depuis le CPT "soumission"
  *
- * @package FondsVertTogo
+ * @package TogoGreenFund
  */
 
-// Données simulées de soumissions
-$soumissions = array(
-	'FVT-2025-001' => array(
-		'projet'    => 'Agriculture résiliente au climat',
-		'type'      => 'Projet complet',
-		'date'      => '15 janvier 2025',
-		'statut'    => 'en_cours',
-		'etapes'    => array(
-			'Déposé'       => '15 janvier 2025',
-			'Validation'   => '20 janvier 2025',
-			'En expertise' => '5 février 2025',
-		),
-	),
-	'FVT-2025-002' => array(
-		'projet'    => 'Énergie solaire pour les communautés rurales',
-		'type'      => 'Manifestation d\'intérêt',
-		'date'      => '22 février 2025',
-		'statut'    => 'approuve',
-		'etapes'    => array(
-			'Déposé'       => '22 février 2025',
-			'Validation'   => '28 février 2025',
-			'En expertise' => '10 mars 2025',
-			'Approuvé'     => '25 mars 2025',
-		),
-	),
-	'FVT-2025-003' => array(
-		'projet'    => 'Gestion durable des forêts',
-		'type'      => 'Projet complet',
-		'date'      => '5 mars 2025',
-		'statut'    => 'rejete',
-		'etapes'    => array(
-			'Déposé'       => '5 mars 2025',
-			'Validation'   => '10 mars 2025',
-			'En expertise' => '20 mars 2025',
-			'Rejeté'       => '5 avril 2025',
-		),
-	),
-	'FVT-2025-004' => array(
-		'projet'    => 'Adaptation des zones côtières',
-		'type'      => 'Projet complet',
-		'date'      => '10 avril 2025',
-		'statut'    => 'en_attente',
-		'etapes'    => array(
-			'Déposé'       => '10 avril 2025',
-		),
-	),
+// Si une référence est passée en GET (lien direct), on la récupère
+$ref_to_search = isset( $_GET['ref'] ) ? sanitize_text_field( $_GET['ref'] ) : '';
+$soumission_trouvee = null;
+
+if ( ! empty( $ref_to_search ) ) {
+    $args = array(
+        'post_type'      => 'soumission',
+        'posts_per_page' => 1,
+        'meta_query'     => array(
+            array(
+                'key'   => '_soumission_reference',
+                'value' => strtoupper( $ref_to_search ),
+            ),
+        ),
+    );
+    $query = new WP_Query( $args );
+    if ( $query->have_posts() ) {
+        $query->the_post();
+        $post_id = get_the_ID();
+        $soumission_trouvee = array(
+            'id'       => $post_id,
+            'reference'=> get_post_meta( $post_id, '_soumission_reference', true ),
+            'projet'   => get_the_title(),
+            'type'     => get_post_meta( $post_id, '_soumission_type_projet', true ),
+            'date'     => get_the_date( 'd F Y' ),
+            'statut'   => get_post_meta( $post_id, '_soumission_statut', true ) ?: 'en_attente',
+            'nom'      => get_post_meta( $post_id, '_soumission_nom', true ),
+            'prenom'   => get_post_meta( $post_id, '_soumission_prenom', true ),
+            'email'    => get_post_meta( $post_id, '_soumission_email', true ),
+        );
+    }
+    wp_reset_postdata();
+}
+
+// Statuts pour l'affichage
+$statuts_display = array(
+    'en_attente' => array(
+        'label' => 'En attente',
+        'class' => 'statut--attente',
+        'etapes' => array( 'Déposé' ),
+        'progress' => 20,
+    ),
+    'en_cours' => array(
+        'label' => 'En cours d\'instruction',
+        'class' => 'statut--encours',
+        'etapes' => array( 'Déposé', 'Validation', 'En expertise' ),
+        'progress' => 50,
+    ),
+    'approuve' => array(
+        'label' => 'Approuvé',
+        'class' => 'statut--approuve',
+        'etapes' => array( 'Déposé', 'Validation', 'En expertise', 'Approuvé' ),
+        'progress' => 100,
+    ),
+    'rejete' => array(
+        'label' => 'Rejeté',
+        'class' => 'statut--rejete',
+        'etapes' => array( 'Déposé', 'Validation', 'En expertise', 'Rejeté' ),
+        'progress' => 100,
+    ),
 );
 
-// Définition des statuts pour l'affichage
-$statuts_display = array(
-	'en_attente' => array(
-		'label' => 'En attente',
-		'class' => 'statut--attente',
-	),
-	'en_cours' => array(
-		'label' => 'En cours d\'instruction',
-		'class' => 'statut--encours',
-	),
-	'approuve' => array(
-		'label' => 'Approuvé',
-		'class' => 'statut--approuve',
-	),
-	'rejete' => array(
-		'label' => 'Rejeté',
-		'class' => 'statut--rejete',
-	),
-);
+// Si aucune référence n'est trouvée, afficher un message
+$not_found = isset( $_GET['ref'] ) && $soumission_trouvee === null;
 ?>
 
-<!-- ============================================================
-     EN‑TÊTE : BREADCRUMB + TITRE
-     ============================================================ -->
-<section class="suivi-header">
-	<div class="container">
-		<nav class="breadcrumb-wrapper" aria-label="Fil d'Ariane">
-			<ol>
-				<li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><i class="fas fa-home"></i> Accueil</a></li>
-				<li class="separator">›</li>
-				<li class="current">Suivi de soumission</li>
-			</ol>
-		</nav>
-		<span class="suivi-header__badge"><i class="fas fa-search"></i> Togo Green Fund </span>
-		<h1>Suivi de soumission</h1>
-		<div class="title-underline"></div>
-		<p class="suivi-header__sub">Entrez votre numéro de référence pour suivre l’état de votre dossier.</p>
-	</div>
-</section>
-
-<!-- ============================================================
-     CONTENU PRINCIPAL
-     ============================================================ -->
-<section class="suivi-content">
-	<div class="container">
-
-		<!-- ===== FORMULAIRE DE RECHERCHE ===== -->
-		<div class="suivi-search">
-			<form id="suivi-form" class="suivi-search__form">
-				<div class="suivi-search__input-group">
-					<input type="text" id="ref-input" placeholder="Ex: FVT-2025-001" required>
-					<button type="submit"><i class="fas fa-search"></i> Suivre</button>
-				</div>
-				<p class="suivi-search__hint">Entrez le numéro de référence reçu lors de votre soumission.</p>
-			</form>
-		</div>
-
-		<!-- ===== RÉSULTAT (caché par défaut) ===== -->
-		<div class="suivi-result" id="suivi-result" style="display:none;">
-			<!-- Contenu injecté par JS -->
-		</div>
-
-		<!-- ===== MESSAGE D'ERREUR (caché par défaut) ===== -->
-		<div class="suivi-error" id="suivi-error" style="display:none;">
-			<i class="fas fa-exclamation-circle"></i>
-			<h3>Aucun dossier trouvé</h3>
-			<p>Vérifiez votre numéro de référence et réessayez.</p>
-		</div>
-
-	</div>
-</section>
-
-<!-- ============================================================
-     APPEL À L'ACTION
-     ============================================================ -->
-<section class="suivi-cta">
-	<div class="container">
-		<h2>Vous avez perdu votre numéro de référence ?</h2>
-		<div class="cta-divider"></div>
-		<p>Contactez notre équipe d’assistance pour obtenir de l’aide.</p>
-		<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="cta-btn">
-			Nous contacter <i class="fas fa-arrow-right"></i>
-		</a>
-	</div>
-</section>
-
-<!-- ============================================================
-     STYLES CSS (intégrés)
-     ============================================================ -->
+<!-- ===== STYLES CSS (inchangés) ===== -->
 <style>
 /* ============================================================
-   PAGE SUIVI – CHARTE FONDS VERT TOGO
+   PAGE SUIVI – CHARTE TOGO GREEN FUND
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;
@@ -156,7 +86,6 @@ $statuts_display = array(
 	--blanc:           #ffffff;
 }
 
-/* ===== EN‑TÊTE ===== */
 .suivi-header {
 	background: linear-gradient(145deg, var(--gris-fond) 0%, #ffffff 100%);
 	padding: 50px 0 55px;
@@ -258,13 +187,11 @@ $statuts_display = array(
 	margin: 18px auto 0;
 }
 
-/* ===== CONTENU ===== */
 .suivi-content {
 	padding: 50px 0 30px;
 	background: #ffffff;
 }
 
-/* ===== FORMULAIRE DE RECHERCHE ===== */
 .suivi-search {
 	max-width: 640px;
 	margin: 0 auto 40px;
@@ -321,14 +248,12 @@ $statuts_display = array(
 	text-align: center;
 }
 
-/* ===== RÉSULTAT ===== */
 .suivi-result {
 	max-width: 800px;
 	margin: 0 auto;
 	padding: 30px 0;
 }
 
-/* Carte de statut */
 .suivi-result-card {
 	background: #fff;
 	border: 1px solid #e7f0ea;
@@ -402,7 +327,6 @@ $statuts_display = array(
 	color: #721c24;
 }
 
-/* Timeline */
 .suivi-timeline {
 	margin-top: 24px;
 	position: relative;
@@ -462,7 +386,6 @@ $statuts_display = array(
 	margin-top: 2px;
 }
 
-/* Barre de progression (pour statut en cours) */
 .suivi-progress {
 	margin-top: 24px;
 }
@@ -488,7 +411,6 @@ $statuts_display = array(
 	margin-top: 6px;
 }
 
-/* ===== ERREUR ===== */
 .suivi-error {
 	text-align: center;
 	padding: 60px 20px;
@@ -513,7 +435,6 @@ $statuts_display = array(
 	font-size: 1rem;
 }
 
-/* ===== CTA ===== */
 .suivi-cta {
 	background: linear-gradient(105deg, var(--vert-fvt-fonce) 0%, #042a19 100%);
 	padding: 76px 0;
@@ -586,7 +507,6 @@ $statuts_display = array(
 	transform: translateX(4px);
 }
 
-/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
 	.suivi-header h1 {
 		font-size: 2.4rem;
@@ -618,113 +538,156 @@ $statuts_display = array(
 }
 </style>
 
-<!-- ============================================================
-     SCRIPT DE GESTION (recherche et affichage)
-     ============================================================ -->
+<!-- ===== EN‑TÊTE ===== -->
+<section class="suivi-header">
+    <div class="container">
+        <nav class="breadcrumb-wrapper" aria-label="Fil d'Ariane">
+            <ol>
+                <li><a href="<?php echo esc_url( home_url( '/' ) ); ?>"><i class="fas fa-home"></i> Accueil</a></li>
+                <li class="separator">›</li>
+                <li class="current">Suivi de soumission</li>
+            </ol>
+        </nav>
+        <span class="suivi-header__badge"><i class="fas fa-search"></i> Togo Green Fund</span>
+        <h1>Suivi de soumission</h1>
+        <div class="title-underline"></div>
+        <p class="suivi-header__sub">Entrez votre numéro de référence pour suivre l’état de votre dossier.</p>
+    </div>
+</section>
+
+<!-- ===== CONTENU ===== -->
+<section class="suivi-content">
+    <div class="container">
+
+        <!-- FORMULAIRE DE RECHERCHE -->
+        <div class="suivi-search">
+            <form id="suivi-form" class="suivi-search__form" method="get" action="<?php echo esc_url( get_permalink() ); ?>">
+                <div class="suivi-search__input-group">
+                    <input type="text" id="ref-input" name="ref" placeholder="Ex: SOU-2025-0001" value="<?php echo esc_attr( $ref_to_search ); ?>" required>
+                    <button type="submit"><i class="fas fa-search"></i> Suivre</button>
+                </div>
+                <p class="suivi-search__hint">Entrez le numéro de référence reçu lors de votre soumission.</p>
+            </form>
+        </div>
+
+        <!-- AFFICHAGE DU RÉSULTAT -->
+        <?php if ( $soumission_trouvee ) : ?>
+            <?php
+            $statut_info = $statuts_display[ $soumission_trouvee['statut'] ] ?? $statuts_display['en_attente'];
+            $etapes = $statut_info['etapes'] ?? array( 'Déposé' );
+            $progress = $statut_info['progress'] ?? 20;
+            $date_soumission = $soumission_trouvee['date'];
+            $nom_complet = ( $soumission_trouvee['prenom'] ? $soumission_trouvee['prenom'] . ' ' : '' ) . $soumission_trouvee['nom'];
+            ?>
+            <div class="suivi-result" id="suivi-result" style="display:block;">
+                <div class="suivi-result-card">
+                    <div class="suivi-result-card__header">
+                        <div>
+                            <span class="suivi-result-card__ref"><strong>Référence :</strong> <?php echo esc_html( $soumission_trouvee['reference'] ); ?></span>
+                            <h3 class="suivi-result-card__titre"><?php echo esc_html( $soumission_trouvee['projet'] ); ?></h3>
+                        </div>
+                        <span class="suivi-result-card__statut <?php echo esc_attr( $statut_info['class'] ); ?>">
+                            <i class="fas fa-circle"></i> <?php echo esc_html( $statut_info['label'] ); ?>
+                        </span>
+                    </div>
+                    <div class="suivi-result-card__meta">
+                        <span><i class="fas fa-tag"></i> <?php echo esc_html( $soumission_trouvee['type'] ); ?></span>
+                        <span><i class="fas fa-calendar-alt"></i> <?php echo esc_html( $date_soumission ); ?></span>
+                        <?php if ( ! empty( $nom_complet ) ) : ?>
+                            <span><i class="fas fa-user"></i> <?php echo esc_html( $nom_complet ); ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="suivi-timeline">
+                        <?php
+                        $total = count( $etapes );
+                        $active_index = 0;
+                        if ( $soumission_trouvee['statut'] === 'en_attente' ) {
+                            $active_index = 0;
+                        } elseif ( $soumission_trouvee['statut'] === 'en_cours' ) {
+                            $active_index = 2; // dernière étape active
+                        } elseif ( $soumission_trouvee['statut'] === 'approuve' || $soumission_trouvee['statut'] === 'rejete' ) {
+                            $active_index = $total - 1;
+                        }
+                        ?>
+                        <?php foreach ( $etapes as $index => $etape ) : ?>
+                            <?php
+                            $is_done = $index < $active_index;
+                            $is_active = $index === $active_index;
+                            $li_class = $is_done ? 'done' : ( $is_active ? 'active' : '' );
+                            $date_etape = '';
+                            if ( $is_done || $is_active ) {
+                                // Simuler une date approximative (en jours)
+                                $jours = $index * 15;
+                                $date_etape = date_i18n( 'd F Y', strtotime( $date_soumission . " + $jours days" ) );
+                            }
+                            ?>
+                            <div class="suivi-timeline__item <?php echo esc_attr( $li_class ); ?>">
+                                <span class="suivi-timeline__label"><?php echo esc_html( $etape ); ?></span>
+                                <?php if ( $date_etape ) : ?>
+                                    <span class="suivi-timeline__date"><?php echo esc_html( $date_etape ); ?></span>
+                                <?php endif; ?>
+                                <?php if ( $is_active && $soumission_trouvee['statut'] === 'en_attente' ) : ?>
+                                    <div class="suivi-timeline__desc">En attente de validation</div>
+                                <?php endif; ?>
+                                <?php if ( $is_active && $soumission_trouvee['statut'] === 'en_cours' ) : ?>
+                                    <div class="suivi-timeline__desc">En cours d'expertise</div>
+                                <?php endif; ?>
+                                <?php if ( $is_active && $soumission_trouvee['statut'] === 'approuve' ) : ?>
+                                    <div class="suivi-timeline__desc">Projet approuvé !</div>
+                                <?php endif; ?>
+                                <?php if ( $is_active && $soumission_trouvee['statut'] === 'rejete' ) : ?>
+                                    <div class="suivi-timeline__desc">Dossier non retenu</div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <!-- Barre de progression -->
+                    <div class="suivi-progress">
+                        <div class="suivi-progress__bar">
+                            <div class="suivi-progress__bar-inner" style="width: <?php echo esc_attr( $progress ); ?>%;"></div>
+                        </div>
+                        <div class="suivi-progress__label">
+                            <span>Progression du dossier</span>
+                            <span><?php echo esc_html( $progress ); ?>%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <?php elseif ( $not_found ) : ?>
+            <!-- MESSAGE D'ERREUR -->
+            <div class="suivi-error" id="suivi-error" style="display:block;">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Aucun dossier trouvé</h3>
+                <p>Vérifiez votre numéro de référence et réessayez.</p>
+            </div>
+        <?php endif; ?>
+
+    </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="suivi-cta">
+    <div class="container">
+        <h2>Vous avez perdu votre numéro de référence ?</h2>
+        <div class="cta-divider"></div>
+        <p>Contactez notre équipe d’assistance pour obtenir de l’aide.</p>
+        <a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="cta-btn">
+            Nous contacter <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</section>
+
+<!-- ===== JS ===== -->
 <script>
-	document.addEventListener('DOMContentLoaded', function() {
-		// Données des soumissions (injectées depuis PHP)
-		var soumissions = <?php echo json_encode($soumissions); ?>;
-		var statuts = <?php echo json_encode($statuts_display); ?>;
-
-		var form = document.getElementById('suivi-form');
-		var refInput = document.getElementById('ref-input');
-		var resultDiv = document.getElementById('suivi-result');
-		var errorDiv = document.getElementById('suivi-error');
-
-		function afficherResultat(ref) {
-			var data = soumissions[ref];
-			if (!data) {
-				resultDiv.style.display = 'none';
-				errorDiv.style.display = 'block';
-				return;
-			}
-			errorDiv.style.display = 'none';
-
-			// Récupérer le libellé et la classe du statut
-			var statutInfo = statuts[data.statut] || { label: 'Inconnu', class: '' };
-
-			// Construction du HTML du résultat
-			var html = '';
-			html += '<div class="suivi-result-card">';
-			html += '<div class="suivi-result-card__header">';
-			html += '<div>';
-			html += '<span class="suivi-result-card__ref"><strong>Référence :</strong> ' + ref + '</span>';
-			html += '<h3 class="suivi-result-card__titre">' + data.projet + '</h3>';
-			html += '</div>';
-			html += '<span class="suivi-result-card__statut ' + statutInfo.class + '"><i class="fas fa-circle"></i> ' + statutInfo.label + '</span>';
-			html += '</div>';
-			html += '<div class="suivi-result-card__meta">';
-			html += '<span><i class="fas fa-tag"></i> ' + data.type + '</span>';
-			html += '<span><i class="fas fa-calendar-alt"></i> ' + data.date + '</span>';
-			html += '</div>';
-
-			// Timeline des étapes
-			html += '<div class="suivi-timeline">';
-			var etapes = data.etapes;
-			var keys = Object.keys(etapes);
-			var total = keys.length;
-			var done = 0;
-			var active = false;
-			keys.forEach(function(key, index) {
-				var isLast = (index === total - 1);
-				var isDone = false;
-				var isActive = false;
-				if (data.statut === 'en_attente' && index === 0) {
-					isActive = true;
-				} else if (data.statut === 'en_cours' && index < total - 1) {
-					isDone = true;
-				} else if (data.statut === 'en_cours' && index === total - 1) {
-					isActive = true;
-				} else if (data.statut === 'approuve' || data.statut === 'rejete') {
-					isDone = true;
-				}
-				var liClass = '';
-				if (isDone) liClass = 'done';
-				if (isActive) liClass = 'active';
-				html += '<div class="suivi-timeline__item ' + liClass + '">';
-				html += '<span class="suivi-timeline__label">' + key + '</span>';
-				html += '<span class="suivi-timeline__date">' + etapes[key] + '</span>';
-				if (isLast && data.statut === 'en_attente') {
-					html += '<div class="suivi-timeline__desc">En attente de validation</div>';
-				} else if (isLast && data.statut === 'rejete') {
-					html += '<div class="suivi-timeline__desc">Dossier non retenu</div>';
-				}
-				html += '</div>';
-			});
-			html += '</div>';
-
-			// Barre de progression pour les statuts en cours ou en attente
-			if (data.statut === 'en_attente' || data.statut === 'en_cours') {
-				var progress = 0;
-				if (data.statut === 'en_attente') progress = 20;
-				else if (data.statut === 'en_cours') progress = 50;
-				html += '<div class="suivi-progress">';
-				html += '<div class="suivi-progress__bar">';
-				html += '<div class="suivi-progress__bar-inner" style="width:' + progress + '%;"></div>';
-				html += '</div>';
-				html += '<div class="suivi-progress__label">';
-				html += '<span>Progression du dossier</span>';
-				html += '<span>' + progress + '%</span>';
-				html += '</div>';
-				html += '</div>';
-			}
-
-			html += '</div>';
-
-			resultDiv.innerHTML = html;
-			resultDiv.style.display = 'block';
-		}
-
-		form.addEventListener('submit', function(e) {
-			e.preventDefault();
-			var ref = refInput.value.trim();
-			if (ref === '') return;
-			// Normaliser : mettre en majuscules (optionnel)
-			ref = ref.toUpperCase();
-			afficherResultat(ref);
-		});
-
-		// Si l'utilisateur tape "Entrée" dans le champ, le formulaire est soumis via le submit
-	});
+document.addEventListener('DOMContentLoaded', function() {
+    // Sélection automatique du champ de recherche
+    const refInput = document.getElementById('ref-input');
+    if ( refInput && refInput.value === '' ) {
+        refInput.focus();
+    }
+});
 </script>

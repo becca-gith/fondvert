@@ -1699,6 +1699,107 @@ function fvt_handle_plainte() {
 }
 add_action( 'admin_post_nopriv_fvt_plainte', 'fvt_handle_plainte' );
 add_action( 'admin_post_fvt_plainte', 'fvt_handle_plainte' );
+
+
+// ======================================================
+// AJOUT DU STATUT AU CPT SOUMISSION
+// ======================================================
+
+// Ajouter une metabox pour le statut dans l'administration
+function fvt_soumission_statut_metabox() {
+    add_meta_box(
+        'fvt_soumission_statut',
+        'Statut de la soumission',
+        'fvt_soumission_statut_metabox_callback',
+        'soumission',
+        'side',
+        'default'
+    );
+}
+add_action( 'add_meta_boxes', 'fvt_soumission_statut_metabox' );
+
+function fvt_soumission_statut_metabox_callback( $post ) {
+    wp_nonce_field( 'fvt_soumission_statut_nonce', 'fvt_soumission_statut_nonce' );
+    $statut = get_post_meta( $post->ID, '_soumission_statut', true ) ?: 'en_attente';
+    $statuts = array(
+        'en_attente' => 'En attente',
+        'en_cours'   => 'En cours d\'instruction',
+        'approuve'   => 'Approuvé',
+        'rejete'     => 'Rejeté',
+    );
+    ?>
+    <p>
+        <label for="fvt_soumission_statut">Statut :</label>
+        <select name="fvt_soumission_statut" id="fvt_soumission_statut" style="width:100%;">
+            <?php foreach ( $statuts as $key => $label ) : ?>
+                <option value="<?php echo esc_attr( $key ); ?>" <?php selected( $statut, $key ); ?>>
+                    <?php echo esc_html( $label ); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+    <?php
+}
+
+function fvt_save_soumission_statut( $post_id ) {
+    if ( ! isset( $_POST['fvt_soumission_statut_nonce'] ) || ! wp_verify_nonce( $_POST['fvt_soumission_statut_nonce'], 'fvt_soumission_statut_nonce' ) ) {
+        return;
+    }
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+    if ( ! current_user_can( 'edit_post', $post_id ) ) {
+        return;
+    }
+    if ( isset( $_POST['fvt_soumission_statut'] ) ) {
+        update_post_meta( $post_id, '_soumission_statut', sanitize_text_field( $_POST['fvt_soumission_statut'] ) );
+    }
+}
+add_action( 'save_post', 'fvt_save_soumission_statut' );
+
+// Ajouter une colonne "Statut" dans l'admin
+function fvt_soumission_admin_columns_statut( $columns ) {
+    $new_columns = array();
+    foreach ( $columns as $key => $value ) {
+        $new_columns[ $key ] = $value;
+        if ( $key === 'type_projet' ) {
+            $new_columns['statut'] = 'Statut';
+        }
+    }
+    return $new_columns;
+}
+add_filter( 'manage_soumission_posts_columns', 'fvt_soumission_admin_columns_statut' );
+
+function fvt_soumission_admin_column_content_statut( $column, $post_id ) {
+    if ( $column === 'statut' ) {
+        $statut = get_post_meta( $post_id, '_soumission_statut', true ) ?: 'en_attente';
+        $labels = array(
+            'en_attente' => 'En attente',
+            'en_cours'   => 'En cours',
+            'approuve'   => 'Approuvé',
+            'rejete'     => 'Rejeté',
+        );
+        $classes = array(
+            'en_attente' => 'statut--attente',
+            'en_cours'   => 'statut--encours',
+            'approuve'   => 'statut--approuve',
+            'rejete'     => 'statut--rejete',
+        );
+        echo '<span class="' . esc_attr( $classes[ $statut ] ) . '" style="padding:3px 12px; border-radius:12px; font-size:11px; font-weight:600; display:inline-block;">' . esc_html( $labels[ $statut ] ) . '</span>';
+    }
+}
+add_action( 'manage_soumission_posts_custom_column', 'fvt_soumission_admin_column_content_statut', 10, 2 );
+
+// Ajouter les styles pour les statuts dans l'admin
+add_action( 'admin_head', 'fvt_soumission_statut_styles' );
+function fvt_soumission_statut_styles() {
+    echo '<style>
+        .statut--attente { background: #fff3cd; color: #856404; }
+        .statut--encours { background: #cce5ff; color: #004085; }
+        .statut--approuve { background: #d4edda; color: #155724; }
+        .statut--rejete { background: #f8d7da; color: #721c24; }
+    </style>';
+}
 // ======================================================
 // FIN DU FICHIER
 // ======================================================
