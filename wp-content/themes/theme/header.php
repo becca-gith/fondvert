@@ -40,6 +40,7 @@
     <style>
         /* ========== VARIABLES ========== */
         :root {
+            --fvt-green:       #006A4F;  /* Pantone 342 C - NOUVELLE COULEUR */
             --fvt-green:       #0a6e3e;
             --fvt-green-dark:  #063d24;
             --fvt-green-darker:#042518;
@@ -54,11 +55,188 @@
             --fvt-font-body:   'Kumbh Sans', sans-serif;
             --fvt-font-title:  'Kumbh Sans', serif;
         }
+         /* ===== REMPLACEMENT COMPLET DES COULEURS VERTES ===== */
+            :root {
+                --fvt-green:       #006A4F !important;
+                --fvt-green-dark:  #004d3a !important;
+                --fvt-green-darker:#003528 !important;
+                --fvt-green-light: #e6f4ef !important;
+            }
+           
+        
+/* ==========================================================
+   DEBUT SUPPRESSION DU SURlIGNAGE JAUNE SUR LA TOPBAR
+   ========================================================== */
+
+/* Supprime le surlignage jaune sur toute la topbar */
+.topbar-two * {
+    background-color: transparent !important;
+}
+
+/* Empêche le surlignage de sélection en jaune */
+.topbar-two ::selection {
+    background: transparent !important;
+    color: #dcf0e3 !important;
+}
+
+.topbar-two ::-moz-selection {
+    background: transparent !important;
+    color: #dcf0e3 !important;
+}
+
+/* Supprime tout fond jaune sur les liens et boutons */
+.topbar-two a,
+.topbar-two .fvt-topbar__item,
+.topbar-two .fvt-cta-btn--topbar {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
+/* S'assure que le fond de la topbar reste son dégradé */
+.topbar-two {
+    background: linear-gradient(90deg, #003528 0%, #004d3a 55%, #006A4F 130%) !important;
+}
+
+/* Supprime le surlignage jaune sur les icônes */
+.topbar-two i {
+    background: rgba(255, 206, 0, 0.14) !important;
+    background-color: rgba(255, 206, 0, 0.14) !important;
+}
+
+/* Supprime le surlignage jaune sur les boutons CTA */
+.fvt-cta-btn--topbar {
+    background: rgba(255, 206, 0, 0.15) !important;
+    background-color: rgba(255, 206, 0, 0.15) !important;
+}
+
+.fvt-cta-btn--topbar:hover {
+    background: var(--fvt-yellow) !important;
+    background-color: var(--fvt-yellow) !important;
+}
+
+/* Supprime le surlignage jaune des éléments de survol */
+.topbar-two a:hover,
+.topbar-two .fvt-topbar__item:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Pour les écrans mobiles */
+@media (max-width: 767px) {
+    .topbar-two * {
+        background-color: transparent !important;
+    }
+    .topbar-two .fvt-cta-btn--topbar {
+        background: rgba(255, 206, 0, 0.15) !important;
+    }
+}
+/* ==========================================================
+   FIN SUPPRESSION DU SURlIGNAGE JAUNE SUR LA TOPBAR
+   ========================================================== */
+
+     /* ==========================================================
+   DEBUT BANDEAU DEFILANT - STYLE "FONT VERT" (Pantone 342 C)
+   ========================================================== */
+        .fvt-scrolling-banner {
+            background: linear-gradient(90deg, #004d3a, #006A4F, #004d3a);
+            background-size: 200% 100%;
+            animation: fvt-banner-bg-shift 8s ease-in-out infinite alternate;
+            color: #ffffff;
+            padding: 8px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            border-bottom: 3px solid #ffce00;
+            box-shadow: inset 0 -2px 10px rgba(0, 0, 0, 0.2), 0 2px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Animation du dégradé de fond */
+        @keyframes fvt-banner-bg-shift {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .fvt-scrolling-banner__track {
+            display: inline-block;
+            animation: fvt-scroll-text 22s linear infinite;
+            padding-left: 100%;
+        }
+
+        /* Le texte lui-même */
+        .fvt-scrolling-banner__text {
+            display: inline-block;
+            font-family: 'Kumbh Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-right: 80px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+            position: relative;
+        }
+
+        /* Séparateur entre les textes : un petit point doré */
+        .fvt-scrolling-banner__text::after {
+            content: "●";
+            color: #ffce00;
+            font-size: 0.6rem;
+            margin-left: 40px;
+            position: relative;
+            top: -2px;
+            opacity: 0.6;
+        }
+
+        /* Animation de défilement */
+        @keyframes fvt-scroll-text {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Pause au survol (optionnel) */
+        .fvt-scrolling-banner:hover .fvt-scrolling-banner__track {
+            animation-play-state: paused;
+        }
+
+        /* Version mobile */
+        @media (max-width: 767px) {
+            .fvt-scrolling-banner__text {
+                font-size: 0.85rem;
+                letter-spacing: 0.8px;
+                padding-right: 40px;
+            }
+            .fvt-scrolling-banner__text::after {
+                margin-left: 20px;
+            }
+            .fvt-scrolling-banner__track {
+                animation-duration: 16s;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .fvt-scrolling-banner__text {
+                font-size: 0.7rem;
+                letter-spacing: 0.5px;
+                padding-right: 25px;
+            }
+            .fvt-scrolling-banner__text::after {
+                margin-left: 12px;
+                font-size: 0.4rem;
+            }
+            .fvt-scrolling-banner__track {
+                animation-duration: 12s;
+            }
+        }
+/* ==========================================================
+  FIN BANDEAU DEFILANT - STYLE "FONT VERT"
+   ========================================================== */
+
 
         /* Utilitaire pour les grands titres de section */
         .fvt-title,
         .fvt-title-serif {
-            font-family: var(--fvt-font-title) !important;
+           font-family: 'Kumbh Sans', sans-serif; !important;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -88,90 +266,184 @@
         .fvt-flag-strip span:nth-child(2) { background: var(--fvt-yellow); }
         .fvt-flag-strip span:nth-child(3) { background: var(--fvt-red); }
 
-        /* ========== TOPBAR ========== */
-        .topbar-two {
-            background: linear-gradient(90deg, var(--fvt-green-darker) 0%, var(--fvt-green-dark) 55%, var(--fvt-green) 130%);
-            margin-bottom: 0;
-            padding-bottom: 0;
-            position: relative;
-            border-bottom: 2px solid var(--fvt-yellow);
-        }
-        .topbar-two__inner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 0;
-            font-size: 13px;
-            color: #dcf0e3;
-            flex-wrap: wrap;
-            gap: 8px 20px;
-        }
-        .fvt-topbar__contacts {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex-wrap: wrap;
-        }
-        .fvt-topbar__contacts a,
-        .fvt-topbar__contacts .fvt-topbar__item {
-            display: inline-flex;
-            align-items: center;
-            color: #dcf0e3;
-            font-weight: 500;
-            transition: color .2s ease;
-            text-decoration: none;
-        }
-        .fvt-topbar__contacts a:hover { color: var(--fvt-yellow); }
-        .fvt-topbar__contacts i {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px; height: 24px;
-            margin-right: 8px;
-            border-radius: 50%;
-            background: rgba(255, 206, 0, 0.14);
-            color: var(--fvt-yellow);
-            font-size: 11.5px;
-        }
-        .fvt-topbar__divider {
-            width: 1px;
-            height: 14px;
-            background: rgba(255,255,255,0.18);
-        }
+                  /* ==========================================================
+   TOPBAR - Version blanche avec vert Pantone 342 C
+   ========================================================== */
+.topbar-two {
+    background: #ffffff !important;
+    margin-bottom: 0;
+    padding-bottom: 0;
+    position: relative;
+    border-bottom: 2px solid #006A4F; /* Ligne verte en bas */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
 
-        .fvt-topbar__right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+.topbar-two__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 13px;
+    color: #006A4F; /* Vert Pantone */
+    flex-wrap: wrap;
+    gap: 8px 20px;
+}
 
-        .fvt-topbar__social {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .fvt-topbar__social a {
-            width: 28px; height: 28px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.10);
-            color: #dcf0e3;
-            font-size: 12.5px;
-            transition: all .25s ease;
-            text-decoration: none;
-        }
-        .fvt-topbar__social a:hover {
-            background: var(--fvt-yellow);
-            color: var(--fvt-green-dark);
-            transform: translateY(-2px);
-        }
+.fvt-topbar__contacts {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
 
-        @media (max-width: 767px) {
-            .fvt-hide-mobile { display: none !important; }
-            .topbar-two__inner { justify-content: center; text-align: center; }
-        }
+.fvt-topbar__contacts a,
+.fvt-topbar__contacts .fvt-topbar__item {
+    display: inline-flex;
+    align-items: center;
+    color: #006A4F; /* Vert Pantone */
+    font-weight: 600;
+    transition: color .2s ease;
+    text-decoration: none;
+}
+
+.fvt-topbar__contacts a:hover {
+    color: #004d3a; /* Vert plus foncé au survol */
+}
+
+.fvt-topbar__contacts i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: rgba(0, 106, 79, 0.10); /* Fond vert très clair */
+    color: #006A4F; /* Vert Pantone */
+    font-size: 12px;
+}
+
+.fvt-topbar__divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(0, 106, 79, 0.15);
+}
+
+.fvt-topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Boutons Griefs et Plaintes 
+.fvt-cta-btn--topbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(0, 106, 79, 0.08) !important;
+    color: #006A4F !important;
+    font-size: 11.5px;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 2px solid rgba(0, 106, 79, 0.15);
+    transition: all .3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}*/
+
+.fvt-cta-btn--topbar:hover {
+    background: #006A4F !important;
+    color: #ffffff !important;
+    border-color: #006A4F;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 106, 79, 0.2);
+}
+
+.fvt-cta-btn--topbar i {
+    font-size: 13px;
+    color: #006A4F;
+    background: transparent !important;
+    margin-right: 2px;
+}
+
+.fvt-cta-btn--topbar:hover i {
+    color: #ffffff !important;
+}
+
+/* Réseaux sociaux */
+.fvt-topbar__social {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 6px;
+}
+
+.fvt-topbar__social a {
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(0, 106, 79, 0.08);
+    color: #006A4F;
+    font-size: 13px;
+    transition: all .25s ease;
+    text-decoration: none;
+}
+
+.fvt-topbar__social a:hover {
+    background: #006A4F;
+    color: #ffffff;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 106, 79, 0.25);
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .fvt-hide-mobile { display: none !important; }
+    .topbar-two__inner { 
+        justify-content: center; 
+        text-align: center;
+        padding: 8px 0;
+    }
+    .fvt-topbar__contacts {
+        justify-content: center;
+        gap: 12px;
+    }
+    .fvt-topbar__right {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .fvt-cta-btn--topbar {
+        font-size: 10px;
+        padding: 6px 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .fvt-cta-btn--topbar {
+        font-size: 9px;
+        padding: 5px 10px;
+        letter-spacing: 0;
+    }
+    .fvt-topbar__contacts a {
+        font-size: 11px;
+    }
+    .fvt-topbar__contacts i {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+        margin-right: 4px;
+    }
+}
+        /* ==========================================================
+   FIN TOPBAR - Version blanche avec vert Pantone 342 C
+   ========================================================== */
 
         /* ========== HEADER PRINCIPAL ========== */
         .main-header--three {
@@ -558,7 +830,7 @@
             margin-left: 0 !important;
         }
         .main-header--three .main-menu .main-menu__list > li > a {
-            font-family: var(--fvt-font-body) !important;
+            font-family: 'Kumbh Sans', sans-serif !important;
             color: var(--fvt-white) !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
@@ -582,7 +854,7 @@
             border-radius: 0 0 12px 12px !important;
         }
         .main-menu .main-menu__list li ul.sub-menu li > a {
-            font-family: var(--fvt-font-body) !important;
+            font-family:'Kumbh Sans', sans-serif !important;
             color: #35443a !important;
             text-transform: none !important;
             font-weight: 600 !important;
@@ -622,26 +894,46 @@
 
     <!-- Liseré drapeau -->
     <div class="fvt-flag-strip"><span></span><span></span><span></span></div>
+<!-- ==========================================================
+     BANDEAU DEFILANT - "Votre instrument Financier au Service du Développement durable"
+     À placer APRÈS le liseré drapeau et AVANT le topbar
+     ========================================================== -->
+    <div class="fvt-scrolling-banner">
+        <div class="fvt-scrolling-banner__track">
+            <span class="fvt-scrolling-banner__text">
+                Mises à jour:🌿 Votre instrument Financier au Service du Développement durable
+            </span>
+            <span class="fvt-scrolling-banner__text">
+                Mises à jour:🌿 Votre instrument Financier au Service du Développement durable
+            </span>
+            <span class="fvt-scrolling-banner__text">
+                Mises à jour:🌿 Votre instrument Financier au Service du Développement durable
+            </span>
+        </div>
+    </div>
 
     <!-- Topbar -->
-    <div class="topbar-two">
+    <!-- Topbar - Version blanche avec vert Pantone 342 C -->
+<div class="topbar-two">
         <div class="container">
             <div class="topbar-two__inner">
                 <div class="fvt-topbar__contacts">
                     <a href="tel:+22820223040"><i class="fas fa-phone-alt"></i><strong>+228 20 22 30 40</strong></a>
-                    <span class="fvt-hide-mobile fvt-topbar__divider"></span>
+                <span class="fvt-hide-mobile fvt-topbar__divider"></span>
                     <a href="mailto:contact@togogreenfund.tg" class="fvt-hide-mobile"><i class="fas fa-envelope"></i><strong>contact@togogreenfund.tg</strong></a>
-                    <span class="fvt-hide-mobile fvt-topbar__divider"></span>
-                    <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"></i><strong>Lomé, Togo</strong></span>
-                </div>
+                <span class="fvt-hide-mobile fvt-topbar__divider"></span>
+                <span class="fvt-topbar__item fvt-hide-mobile"><i class="fas fa-map-marker-alt"></i><strong>Lomé, Togo</strong></span>
+            </div>
                 <div class="fvt-topbar__right">
 
                     <!--Plainte et Grief -->
-                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'griefs-projets' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
-                        <i class="fas fa-file-signature"></i> Griefs projets
+                    
+                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'griefs-projets' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar" style="background: rgb(255, 207, 17) !important; border: none;">
+                    <i class="fas fa-file-signature"></i> Griefs projets
                     </a>
-                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'plaintes' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar">
-                        <i class="fas fa-file-signature"></i> Plaintes
+                    <!--Plainte -->
+                    <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'plaintes' ) ); ?>" class="fvt-cta-btn fvt-cta-btn--topbar" style="background: rgb(255, 207, 17) !important; border: none;">
+                    <i class="fas fa-file-signature"></i> Plaintes
                     </a>
                     <div class="fvt-topbar__social">
                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>

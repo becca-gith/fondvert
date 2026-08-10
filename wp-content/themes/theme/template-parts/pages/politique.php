@@ -108,11 +108,16 @@ if ( empty( $documents ) ) {
 
 // Types de catégories pour le filtre
 $categories = array(
-    'tous'      => 'Tous',
+	'tous'    => 'Tous',
     'plan'      => 'Plan stratégique',
-    'politique' => 'Politique anti fraude',
-    'decret'    => 'Décret',
-    'mecanisme' => 'Mécanisme de règlement des griefs',
+	'politique' => 'Politique',
+	'decret'    => 'Décret',
+	'arreté'    => 'Arrêté',
+	'note'    => 'Note',
+	'organigramme' => 'Organigramme',
+	'mecanisme' => 'Mécanisme',
+	'manuel' => 'Manuel',
+	'charte' => 'charte',
 );
 ?>
 

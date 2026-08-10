@@ -516,9 +516,14 @@ function fvt_document_metabox_callback( $post ) {
     
     $categories_list = array(
         'plan'      => 'Plan stratégique',
-        'politique' => 'Politique anti fraude',
+        'politique' => 'Politique',
         'decret'    => 'Décret',
-        'mecanisme' => 'Mécanisme de règlement des griefs',
+        'arreté'    => 'Arrêté',
+        'note'    => 'Note',
+        'organigramme' => 'Organigramme',
+        'mecanisme' => 'Mécanisme',
+        'manuel' => 'Manuel',
+        'charte' => 'charte',
     );
     $types_list = array(
         'rapport'    => 'Rapport',
