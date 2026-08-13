@@ -469,8 +469,82 @@
             margin: 0;
         }
 
-        /* ========== LOGO (Armoiries du Togo) ========== */
+        /* ========== LOGO - Version premium avec animations ========== */
         .main-header__logo {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+        }
+
+        .main-header__logo-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%; /* Rond parfait */
+            background: var(--fvt-white);
+            border: 4px solid  #006A4F;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+            padding: 8px;
+            overflow: hidden; /* Cache les débordements */
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Effet de brillance au survol */
+        .main-header__logo-badge::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .main-header__logo:hover .main-header__logo-badge::after {
+            opacity: 1;
+        }
+
+        .main-header__logo:hover .main-header__logo-badge {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+            border-color: var(--fvt-green);
+        }
+
+        .main-header__logo-badge img,
+        .main-header__logo-badge .custom-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* L'image remplit le cercle */
+            border-radius: 50%; /* L'image suit la forme du conteneur */
+        }
+
+        /* Version responsive */
+        @media (max-width: 768px) {
+            .main-header__logo-badge {
+                width: 60px;
+                height: 60px;
+                padding: 6px;
+                border-width: 3px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-header__logo-badge {
+                width: 50px;
+                height: 50px;
+                padding: 4px;
+                border-width: 2.5px;
+            }
+        }
+        /* ========== LOGO (Armoiries du Togo) ========== */
+       /* .main-header__logo {
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -481,15 +555,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 54px;
-            height: 54px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: var(--fvt-white);
-            border: 3px solid var(--fvt-yellow);
+            border: 8px solid var(--fvt-yellow);
+            border: 4px solid  #006A4F;
             box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-            padding: 6px;
+            padding: 8px;
             transition: transform .3s ease, box-shadow .3s ease;
-        }
+       /* }
         .main-header__logo:hover .main-header__logo-badge {
             transform: translateY(-2px) scale(1.04);
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
@@ -501,7 +576,7 @@
             width: auto;
             height: auto;
             object-fit: contain;
-        }
+        } */
 
         /* ========== MENU PRINCIPAL ========== */
         .main-header__nav { flex: 1; display: flex; justify-content: center; min-width: 0; }
@@ -955,7 +1030,7 @@
                     <?php if ( has_custom_logo() ) : ?>
                         <?php the_custom_logo(); ?>
                     <?php else : ?>
-                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/armoirie-togo.png' ); ?>"
+                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logotgf.jpeg' ); ?>"
                              alt="Armoiries du Togo - <?php bloginfo( 'name' ); ?>" />
                     <?php endif; ?>
                 </span>
@@ -981,12 +1056,13 @@
                     <li class="dropdown">
                         <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet' ) ); ?>">Projets</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet2' ) ); ?>">Projets</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'projet2' ) ); ?>">Portefeuilles Projets</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'manifester' ) ); ?>">Manifestation d'intérêt</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'soumettre' ) ); ?>">Soumettre un projet</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'suivre' ) ); ?>">Suivre une soummission</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grands-projets' ) ); ?>">Grands Projets climat</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'grands-projets' ) ); ?>">Projets Financés par TGF</a></li>
                             <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'realisations' ) ); ?>">Realisation</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'manifester' ) ); ?>">Manifestation d'intérêt</a></li>
+                            
                         </ul>
                     </li>
 

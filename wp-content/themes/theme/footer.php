@@ -422,7 +422,7 @@
 
                         <div class="footer-widget__social">
                             <a href="https://facebook.com/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                            <a href="https://twitter.com/" target="_blank" aria-label="X"><i class="fab fa-twitter"></i></a>
+                            <a href="https://x.com/" target="_blank" aria-label="X" class="social-x"><i class="fab fa-twitter"></i></a>
                             <a href="https://linkedin.com/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                             <a href="https://youtube.com/" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
                         </div>
@@ -594,10 +594,10 @@ SIDEBAR (off-canvas) – facultatif
         </ul>
         <div class="sidebar-one__social">
             <a href="https://facebook.com/" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://x.com/" target="_blank"><i class="fab fa-x-twitter"></i></a>
             <a href="https://linkedin.com/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
             <a href="https://youtube.com/" target="_blank"><i class="fab fa-youtube"></i></a>
-        </div>
+        </div> 
     </div>
 </aside>
 

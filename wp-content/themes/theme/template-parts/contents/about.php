@@ -18,7 +18,7 @@ $page_id = $director_page->ID;
 // ----- IMAGE : priorité à la vignette de la page, sinon ACF, sinon fallback -----
 $director_image = get_the_post_thumbnail_url( $page_id, 'large' );
 if ( ! $director_image ) {
-	$director_image = get_field( 'director_image', $page_id ) ? wp_get_attachment_image_url( get_field( 'director_image', $page_id ), 'large' ) : FVT_THEME_URI . '/assets/images/resources/about-4-1.jpg';
+	$director_image = get_field( 'director_image', $page_id ) ? wp_get_attachment_image_url( get_field( 'director_image', $page_id ), 'large' ) : FVT_THEME_URI . '/assets/images/resources/about-4-1.png';
 }
 
 // ----- BOUTON : texte et URL fixes -----

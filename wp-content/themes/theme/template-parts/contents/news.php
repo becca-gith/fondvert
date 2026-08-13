@@ -230,7 +230,7 @@ $icons = array( 'icon-leaf', 'icon-sustainability', 'icon-management', 'icon-agr
 
 <section class="service-three">
     <div class="service-three__bg" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/images/shapes/service-bg-3-shape.png' ); ?>);"></div>
-    <div class="service-three__shape" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/images/resources/service-2-shape-2.png' ); ?>);"></div>
+   <!-- <div class="service-three__shape" style="background-image: url(<?php echo esc_url( get_template_directory_uri() . '/assets/images/resources/service-2-shape-2.png' ); ?>);"></div>-->
     <div class="container">
         <div class="sec-title text-center">
             <h6 class="sec-title__tagline bw-split-in-right">

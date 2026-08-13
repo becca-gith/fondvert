@@ -66,6 +66,14 @@ if ( ! $partners_query->have_posts() ) {
             'name' => 'GGGI',
             'logo' => 'gggitg.jpg',
         ),
+        array(
+            'name' => 'ifdc',
+            'logo' => 'ifdc.png',
+        ),
+        array(
+            'name' => 'FAO',
+            'logo' => 'fao_logo.png',
+        ),
     );
 } else {
     // Construction du tableau à partir des articles du CPT
@@ -188,22 +196,10 @@ if ( ! $partners_query->have_posts() ) {
         box-shadow: 0 14px 30px rgba(6, 61, 36, 0.13);
         border-color: rgba(10, 110, 62, 0.2);
     }
-    /*.client-carousel__one__item img {
-        max-height: 58px;
-        max-width: 85%;
-        width: auto;
-        filter: grayscale(35%);
-        opacity: 0.85;
-        transition: filter 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
-    }
-    .client-carousel__one__item:hover img {
-        filter: grayscale(0%);
-        opacity: 1;
-        transform: scale(1.04);
-    }*/
+
        .client-carousel__one__item img {
-    max-height: 58px;
-    max-width: 85%;
+    max-height: 100px;
+    max-width: 90%;
     width: auto;
 } 
 
@@ -211,11 +207,11 @@ if ( ! $partners_query->have_posts() ) {
         .client-carousel { padding: 60px 0 55px; }
         .partners-header .sec-title__title { letter-spacing: 0.2px; }
         .client-carousel__one__item {
-            height: 84px;
+            height: 110px;
             padding: 14px;
         }
         .client-carousel__one__item img {
-            max-height: 42px;
+            max-height: 64px;
         }
     }
 </style>
