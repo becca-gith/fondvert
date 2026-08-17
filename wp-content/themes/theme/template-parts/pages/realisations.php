@@ -1,68 +1,192 @@
 <?php
 /**
- * Template part : Page "Nos réalisations" – version statique
+ * Template part : Page "Nos réalisations" – Version avec 4 guichets
  * Fonds Vert du Togo
  *
  * @package FondsVertTogo
  */
 
-// Données des réalisations
-$realisations = array(
-	array(
-		'id'          => 1,
-		'titre'       => 'Agriculture résiliente dans les Savanes',
-		'categorie'   => 'Agriculture',
-		'image'       => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&h=400&fit=crop',
-		'description' => 'Formation de 5 000 agriculteurs aux techniques agroécologiques et installation de systèmes d\'irrigation durable.',
-		'impact'      => array(
-			'5000' => 'Agriculteurs formés',
-			'2000' => 'Hectares réhabilités',
-			'30%'  => 'Augmentation des rendements',
+// ============================================================
+// 1. DONNÉES DES RÉALISATIONS PAR GUICHET
+// ============================================================
+$guichets = array(
+	'agriculture' => array(
+		'nom'        => 'Agriculture durable',
+		'icone'      => 'fa-seedling',
+		'couleur'    => '#0a6e3e',
+		'projets'    => array(
+			array(
+				'titre'       => 'Agriculture résiliente dans les Savanes',
+				'image'       => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&h=400&fit=crop',
+				'description' => 'Formation de 5 000 agriculteurs aux techniques agroécologiques et installation de systèmes d\'irrigation durable.',
+				'impact'      => array(
+					'5000'  => 'Agriculteurs formés',
+					'2000'  => 'Hectares réhabilités',
+					'30%'   => 'Augmentation des rendements',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 5000,
+			),
+			array(
+				'titre'       => 'Agroforesterie dans la Région Centrale',
+				'image'       => 'https://images.unsplash.com/photo-1523348837708-15c5f3c9e7b7?w=600&h=400&fit=crop',
+				'description' => 'Association de cultures vivrières et d\'arbres fruitiers pour restaurer la fertilité des sols.',
+				'impact'      => array(
+					'1200'  => 'Agriculteurs formés',
+					'800'   => 'Hectares traités',
+					'40%'   => 'Augmentation des rendements',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 1200,
+			),
+			array(
+				'titre'       => 'Filière mangue durable',
+				'image'       => 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&h=400&fit=crop',
+				'description' => 'Appui à la production et à la transformation de mangues bio pour l\'exportation.',
+				'impact'      => array(
+					'800'   => 'Producteurs accompagnés',
+					'300'   => 'Hectares de vergers',
+					'3'     => 'Unités de transformation',
+				),
+				'statut'      => 'encours',
+				'beneficiaires' => 800,
+			),
 		),
-		'statut'      => 'termine',
 	),
-	array(
-		'id'          => 2,
-		'titre'       => 'Électrification solaire des villages',
-		'categorie'   => 'Énergie',
-		'image'       => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop',
-		'description' => 'Installation de mini-réseaux solaires dans 30 villages de la région Maritime, bénéficiant à 15 000 ménages.',
-		'impact'      => array(
-			'15000' => 'Ménages électrifiés',
-			'30'    => 'Villages équipés',
-			'200'   => 'Emplois créés',
+	'foret' => array(
+		'nom'        => 'Forêt et biodiversité',
+		'icone'      => 'fa-tree',
+		'couleur'    => '#1a7a3e',
+		'projets'    => array(
+			array(
+				'titre'       => 'Restauration des forêts des Plateaux',
+				'image'       => 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&h=400&fit=crop',
+				'description' => 'Reboisement participatif de 10 000 hectares de forêts communautaires et création de 500 emplois verts.',
+				'impact'      => array(
+					'10000' => 'Hectares restaurés',
+					'3000'  => 'Ménages bénéficiaires',
+					'500'   => 'Emplois créés',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 3000,
+			),
+			array(
+				'titre'       => 'Protection des aires protégées de la Kara',
+				'image'       => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=600&h=400&fit=crop',
+				'description' => 'Renforcement des dispositifs de surveillance et restauration des habitats naturels.',
+				'impact'      => array(
+					'50000' => 'Hectares protégés',
+					'50'    => 'Agents formés',
+					'20'    => 'Espèces suivies',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 2000,
+			),
+			array(
+				'titre'       => 'Corridors écologiques du Sud-Togo',
+				'image'       => 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&h=400&fit=crop',
+				'description' => 'Création de couloirs de migration pour la faune entre les parcs nationaux.',
+				'impact'      => array(
+					'3000'  => 'Hectares connectés',
+					'200'   => 'Emplois créés',
+					'15'    => 'Espèces protégées',
+				),
+				'statut'      => 'encours',
+				'beneficiaires' => 1500,
+			),
 		),
-		'statut'      => 'termine',
 	),
-	array(
-		'id'          => 3,
-		'titre'       => 'Restauration des forêts des Plateaux',
-		'categorie'   => 'Forêt',
-		'image'       => 'https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=600&h=400&fit=crop',
-		'description' => 'Reboisement participatif de 10 000 hectares de forêts communautaires et création de 500 emplois verts.',
-		'impact'      => array(
-			'10000' => 'Hectares restaurés',
-			'3000'  => 'Ménages bénéficiaires',
-			'500'   => 'Emplois créés',
+	'eau' => array(
+		'nom'        => 'Eau et assainissement',
+		'icone'      => 'fa-water',
+		'couleur'    => '#0077be',
+		'projets'    => array(
+			array(
+				'titre'       => 'Adduction d\'eau potable dans les Savanes',
+				'image'       => 'https://images.unsplash.com/photo-1544902376-3f7a86c2b4b3?w=600&h=400&fit=crop',
+				'description' => 'Construction de 15 forages équipés de pompes solaires pour 20 000 personnes.',
+				'impact'      => array(
+					'20000' => 'Personnes desservies',
+					'15'    => 'Forages solaires',
+					'5'     => 'Villages équipés',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 20000,
+			),
+			array(
+				'titre'       => 'Assainissement des zones périurbaines de Lomé',
+				'image'       => 'https://images.unsplash.com/photo-1588969687421-9c1c6b0b9e3f?w=600&h=400&fit=crop',
+				'description' => 'Construction de latrines publiques et sensibilisation à l\'hygiène.',
+				'impact'      => array(
+					'25000' => 'Personnes sensibilisées',
+					'200'   => 'Latrines construites',
+					'50'    => 'Emplois locaux',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 25000,
+			),
+			array(
+				'titre'       => 'Micro-irrigation dans la Région Maritime',
+				'image'       => 'https://images.unsplash.com/photo-1571599851153-3eb04d8c48a8?w=600&h=400&fit=crop',
+				'description' => 'Installation de systèmes goutte-à-goutte pour les maraîchers en saison sèche.',
+				'impact'      => array(
+					'600'   => 'Hectares irrigués',
+					'3000'  => 'Maraîchers bénéficiaires',
+					'50%'   => 'Réduction de la pénurie d\'eau',
+				),
+				'statut'      => 'encours',
+				'beneficiaires' => 3000,
+			),
 		),
-		'statut'      => 'termine',
 	),
-	array(
-		'id'          => 4,
-		'titre'       => 'Protection des côtes togolaises',
-		'categorie'   => 'Littoral',
-		'image'       => 'https://images.unsplash.com/photo-1544552861-1f2c946a75f4?w=600&h=400&fit=crop',
-		'description' => 'Restauration de mangroves et construction d\'ouvrages de protection contre l\'érosion côtière.',
-		'impact'      => array(
-			'50'    => 'Km de côtes protégés',
-			'20000' => 'Personnes protégées',
-			'100'   => 'Hectares de mangrove',
+	'energie' => array(
+		'nom'        => 'Énergie et infrastructure durable',
+		'icone'      => 'fa-solar-panel',
+		'couleur'    => '#f39c12',
+		'projets'    => array(
+			array(
+				'titre'       => 'Électrification solaire des villages',
+				'image'       => 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=600&h=400&fit=crop',
+				'description' => 'Installation de mini-réseaux solaires dans 30 villages de la région Maritime, bénéficiant à 15 000 ménages.',
+				'impact'      => array(
+					'15000' => 'Ménages électrifiés',
+					'30'    => 'Villages équipés',
+					'200'   => 'Emplois créés',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 15000,
+			),
+			array(
+				'titre'       => 'Plateformes multifonctionnelles dans les Plateaux',
+				'image'       => 'https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=600&h=400&fit=crop',
+				'description' => 'Installation de mini-centrales solaires pour la transformation des produits agricoles.',
+				'impact'      => array(
+					'100'   => 'Plateformes installées',
+					'5000'  => 'Personnes bénéficiaires',
+					'300'   => 'Emplois créés',
+				),
+				'statut'      => 'termine',
+				'beneficiaires' => 5000,
+			),
+			array(
+				'titre'       => 'Infrastructures vertes en milieu urbain',
+				'image'       => 'https://images.unsplash.com/photo-1581092335879-86f7bdd34b3b?w=600&h=400&fit=crop',
+				'description' => 'Construction de bâtiments publics à faible empreinte énergétique.',
+				'impact'      => array(
+					'5'     => 'Bâtiments publics équipés',
+					'20000' => 'Usagers bénéficiaires',
+					'40%'   => 'Économie d\'énergie',
+				),
+				'statut'      => 'encours',
+				'beneficiaires' => 20000,
+			),
 		),
-		'statut'      => 'termine',
 	),
 );
 
-// Témoignages de bénéficiaires
+// ============================================================
+// 2. TÉMOIGNAGES (inchangés)
+// ============================================================
 $temoignages = array(
 	array(
 		'nom'    => 'Komi AGBOKLI',
@@ -77,6 +201,37 @@ $temoignages = array(
 		'texte'  => 'L\'installation de panneaux solaires a changé notre vie. Mes enfants peuvent étudier le soir et nous avons pu lancer une petite activité de transformation de produits locaux.',
 	),
 );
+
+// ============================================================
+// 3. CALCUL DES STATISTIQUES PAR GUICHET
+// ============================================================
+$stats_guichets = array();
+$total_projets = 0;
+$total_beneficiaires = 0;
+$total_acheves = 0;
+
+foreach ($guichets as $cle => $guichet) {
+	$nb_projets = count($guichet['projets']);
+	$nb_acheves = 0;
+	$nb_benef = 0;
+	
+	foreach ($guichet['projets'] as $projet) {
+		if ($projet['statut'] === 'termine') {
+			$nb_acheves++;
+		}
+		$nb_benef += $projet['beneficiaires'];
+	}
+	
+	$stats_guichets[$cle] = array(
+		'projets' => $nb_projets,
+		'acheves' => $nb_acheves,
+		'beneficiaires' => $nb_benef,
+	);
+	
+	$total_projets += $nb_projets;
+	$total_beneficiaires += $nb_benef;
+	$total_acheves += $nb_acheves;
+}
 ?>
 
 <!-- ============================================================
@@ -96,7 +251,7 @@ $temoignages = array(
 		<span class="realisations-header__badge"><i class="fas fa-trophy"></i> Fonds Vert Togo</span>
 		<h1>Nos réalisations</h1>
 		<div class="title-underline"></div>
-		<p class="realisations-header__sub">Découvrez les résultats concrets des projets financés par le Fonds Vert.</p>
+		<p class="realisations-header__sub">Découvrez les résultats concrets des projets financés par le Fonds Vert, organisés par guichet d'intervention.</p>
 	</div>
 </section>
 
@@ -106,47 +261,97 @@ $temoignages = array(
 <section class="realisations-content">
 	<div class="container">
 
-		<!-- ===== CHIFFRES CLÉS ===== -->
-		<div class="realisations-stats">
+		<!-- ===== STATISTIQUES GLOBALES ===== -->
+		<div class="realisations-stats-globales">
 			<div class="stat-item">
-				<span class="stat-item__nombre">12</span>
+				<span class="stat-item__nombre"><?php echo $total_projets; ?></span>
+				<span class="stat-item__label">Projets totaux</span>
+			</div>
+			<div class="stat-item">
+				<span class="stat-item__nombre"><?php echo $total_acheves; ?></span>
 				<span class="stat-item__label">Projets achevés</span>
 			</div>
 			<div class="stat-item">
-				<span class="stat-item__nombre">45 000+</span>
+				<span class="stat-item__nombre"><?php echo number_format($total_beneficiaires, 0, ',', ' '); ?>+</span>
 				<span class="stat-item__label">Bénéficiaires</span>
 			</div>
 			<div class="stat-item">
-				<span class="stat-item__nombre">25</span>
-				<span class="stat-item__label">Partenaires mobilisés</span>
-			</div>
-			<div class="stat-item">
-				<span class="stat-item__nombre">30%</span>
-				<span class="stat-item__label">Amélioration moyenne des rendements</span>
+				<span class="stat-item__nombre">4</span>
+				<span class="stat-item__label">Guichets d'intervention</span>
 			</div>
 		</div>
 
-		<!-- ===== GRILLE DES RÉALISATIONS ===== -->
-		<div class="realisations-grid">
-			<?php foreach ( $realisations as $realisation ) : ?>
-				<article class="realisation-card">
-					<div class="realisation-card__image">
-						<img src="<?php echo esc_url( $realisation['image'] ); ?>" alt="<?php echo esc_attr( $realisation['titre'] ); ?>" loading="lazy">
-						<span class="realisation-card__categorie"><?php echo esc_html( $realisation['categorie'] ); ?></span>
+		<!-- ===== FILTRES PAR GUICHET ===== -->
+		<div class="realisations-filtres" id="filtres-guichets">
+			<button class="filtre-btn actif" data-guichet="tous">
+				<i class="fas fa-th-large"></i> Tous
+			</button>
+			<?php foreach ($guichets as $cle => $guichet) : ?>
+				<button class="filtre-btn" data-guichet="<?php echo esc_attr($cle); ?>">
+					<i class="fas <?php echo esc_attr($guichet['icone']); ?>"></i>
+					<?php echo esc_html($guichet['nom']); ?>
+					<span class="filtre-badge"><?php echo count($guichet['projets']); ?></span>
+				</button>
+			<?php endforeach; ?>
+		</div>
+
+		<!-- ===== STATISTIQUES PAR GUICHET ===== -->
+		<div class="realisations-stats-guichets" id="stats-guichets">
+			<?php foreach ($guichets as $cle => $guichet) : 
+				$stats = $stats_guichets[$cle];
+			?>
+				<div class="stat-guichet" data-guichet="<?php echo esc_attr($cle); ?>">
+					<div class="stat-guichet__header">
+						<i class="fas <?php echo esc_attr($guichet['icone']); ?>" style="color: <?php echo esc_attr($guichet['couleur']); ?>;"></i>
+						<span class="stat-guichet__nom"><?php echo esc_html($guichet['nom']); ?></span>
 					</div>
-					<div class="realisation-card__content">
-						<h3 class="realisation-card__titre"><?php echo esc_html( $realisation['titre'] ); ?></h3>
-						<p class="realisation-card__desc"><?php echo esc_html( $realisation['description'] ); ?></p>
-						<div class="realisation-card__impact">
-							<?php foreach ( $realisation['impact'] as $valeur => $label ) : ?>
-								<div class="impact-item">
-									<span class="impact-item__valeur"><?php echo esc_html( $valeur ); ?></span>
-									<span class="impact-item__label"><?php echo esc_html( $label ); ?></span>
-								</div>
-							<?php endforeach; ?>
+					<div class="stat-guichet__chiffres">
+						<div class="stat-guichet__item">
+							<span class="stat-guichet__valeur"><?php echo $stats['projets']; ?></span>
+							<span class="stat-guichet__label">Projets</span>
+						</div>
+						<div class="stat-guichet__item">
+							<span class="stat-guichet__valeur"><?php echo $stats['acheves']; ?></span>
+							<span class="stat-guichet__label">Achevés</span>
+						</div>
+						<div class="stat-guichet__item">
+							<span class="stat-guichet__valeur"><?php echo number_format($stats['beneficiaires'], 0, ',', ' '); ?></span>
+							<span class="stat-guichet__label">Bénéficiaires</span>
 						</div>
 					</div>
-				</article>
+				</div>
+			<?php endforeach; ?>
+		</div>
+
+		<!-- ===== GRILLE DES RÉALISATIONS ===== -->
+		<div class="realisations-grid" id="realisations-grid">
+			<?php foreach ($guichets as $cle_guichet => $guichet) : ?>
+				<?php foreach ($guichet['projets'] as $projet) : ?>
+					<article class="realisation-card" data-guichet="<?php echo esc_attr($cle_guichet); ?>">
+						<div class="realisation-card__image">
+							<img src="<?php echo esc_url($projet['image']); ?>" alt="<?php echo esc_attr($projet['titre']); ?>" loading="lazy">
+							<span class="realisation-card__statut <?php echo esc_attr($projet['statut']); ?>">
+								<?php echo $projet['statut'] === 'termine' ? '✔ Achevé' : '🔄 En cours'; ?>
+							</span>
+						</div>
+						<div class="realisation-card__content">
+							<span class="realisation-card__guichet" style="background-color: <?php echo esc_attr($guichet['couleur']); ?>;">
+								<i class="fas <?php echo esc_attr($guichet['icone']); ?>"></i>
+								<?php echo esc_html($guichet['nom']); ?>
+							</span>
+							<h3 class="realisation-card__titre"><?php echo esc_html($projet['titre']); ?></h3>
+							<p class="realisation-card__desc"><?php echo esc_html($projet['description']); ?></p>
+							<div class="realisation-card__impact">
+								<?php foreach ($projet['impact'] as $valeur => $label) : ?>
+									<div class="impact-item">
+										<span class="impact-item__valeur"><?php echo esc_html($valeur); ?></span>
+										<span class="impact-item__label"><?php echo esc_html($label); ?></span>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</article>
+				<?php endforeach; ?>
 			<?php endforeach; ?>
 		</div>
 
@@ -154,16 +359,16 @@ $temoignages = array(
 		<div class="realisations-temoignages">
 			<h3 class="realisations-temoignages__title"><i class="fas fa-quote-left"></i> Ce qu'ils disent</h3>
 			<div class="temoignages-grid">
-				<?php foreach ( $temoignages as $temoignage ) : ?>
+				<?php foreach ($temoignages as $temoignage) : ?>
 					<div class="temoignage-card">
 						<div class="temoignage-card__header">
-							<img src="<?php echo esc_url( $temoignage['photo'] ); ?>" alt="<?php echo esc_attr( $temoignage['nom'] ); ?>" loading="lazy">
+							<img src="<?php echo esc_url($temoignage['photo']); ?>" alt="<?php echo esc_attr($temoignage['nom']); ?>" loading="lazy">
 							<div>
-								<span class="temoignage-card__nom"><?php echo esc_html( $temoignage['nom'] ); ?></span>
-								<span class="temoignage-card__fonction"><?php echo esc_html( $temoignage['fonction'] ); ?></span>
+								<span class="temoignage-card__nom"><?php echo esc_html($temoignage['nom']); ?></span>
+								<span class="temoignage-card__fonction"><?php echo esc_html($temoignage['fonction']); ?></span>
 							</div>
 						</div>
-						<p class="temoignage-card__texte">« <?php echo esc_html( $temoignage['texte'] ); ?> »</p>
+						<p class="temoignage-card__texte">« <?php echo esc_html($temoignage['texte']); ?> »</p>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -177,12 +382,7 @@ $temoignages = array(
      ============================================================ -->
 <section class="realisations-cta">
 	<div class="container">
-		<h2>Vous souhaitez soutenir nos actions ?</h2>
-		<div class="cta-divider"></div>
-		<p>Devenez partenaire du Fonds Vert et contribuez à un Togo résilient.</p>
-		<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="cta-btn">
-			Nous contacter <i class="fas fa-arrow-right"></i>
-		</a>
+		
 	</div>
 </section>
 
@@ -191,7 +391,7 @@ $temoignages = array(
      ============================================================ -->
 <style>
 /* ============================================================
-   PAGE RÉALISATIONS – CHARTE FONDS VERT TOGO
+   PAGE RÉALISATIONS – CHARTE FONDS VERT TOGO (version guichets)
    ============================================================ */
 :root {
 	--vert-fvt:        #0a6e3e;
@@ -217,7 +417,7 @@ $temoignages = array(
 	left: 0;
 	right: 0;
 	height: 4px;
-	background: linear-gradient(90deg, var(--vert-fvt) 0 33%, var(--jaune-fvt) 33% 66%, var(--rouge-fvt) 66% 100%);
+	background: linear-gradient(90deg, var(--vert-fvt) 0 25%, #1a7a3e 25% 50%, #0077be 50% 75%, #f39c12 75% 100%);
 }
 .breadcrumb-wrapper {
 	margin-bottom: 20px;
@@ -304,12 +504,12 @@ $temoignages = array(
 	margin: 18px auto 0;
 }
 
-/* ===== CHIFFRES CLÉS ===== */
-.realisations-stats {
+/* ===== STATISTIQUES GLOBALES ===== */
+.realisations-stats-globales {
 	display: grid;
 	grid-template-columns: repeat(4, 1fr);
 	gap: 20px;
-	margin-bottom: 50px;
+	margin-bottom: 40px;
 }
 .stat-item {
 	background: var(--gris-fond);
@@ -336,6 +536,113 @@ $temoignages = array(
 	font-size: 0.95rem;
 	color: #5a6a5f;
 	margin-top: 4px;
+}
+
+/* ===== FILTRES ===== */
+.realisations-filtres {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 12px;
+	margin-bottom: 30px;
+}
+.filtre-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 22px;
+	border: 2px solid #e0ebe6;
+	border-radius: 40px;
+	background: #fff;
+	color: #4d6a59;
+	font-family: 'Kumbh Sans', sans-serif;
+	font-weight: 600;
+	font-size: 0.95rem;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+.filtre-btn:hover {
+	border-color: var(--vert-fvt);
+	color: var(--vert-fvt);
+}
+.filtre-btn.actif {
+	background: var(--vert-fvt);
+	border-color: var(--vert-fvt);
+	color: #fff;
+}
+.filtre-btn.actif .filtre-badge {
+	background: rgba(255,255,255,0.3);
+	color: #fff;
+}
+.filtre-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	padding: 0 8px;
+	border-radius: 20px;
+	background: #e7f0ea;
+	color: var(--vert-fvt-fonce);
+	font-size: 0.75rem;
+	font-weight: 700;
+}
+
+/* ===== STATISTIQUES PAR GUICHET ===== */
+.realisations-stats-guichets {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	margin-bottom: 40px;
+}
+.stat-guichet {
+	background: #fff;
+	border: 1px solid #e7f0ea;
+	border-radius: 16px;
+	padding: 18px 20px;
+	transition: all 0.3s ease;
+}
+.stat-guichet:hover {
+	box-shadow: 0 4px 16px rgba(6,61,36,0.08);
+}
+.stat-guichet__header {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+.stat-guichet__header i {
+	font-size: 1.4rem;
+}
+.stat-guichet__nom {
+	font-family: 'Kumbh Sans', sans-serif;
+	font-weight: 700;
+	font-size: 0.9rem;
+	color: var(--vert-fvt-fonce);
+}
+.stat-guichet__chiffres {
+	display: flex;
+	justify-content: space-between;
+	gap: 8px;
+}
+.stat-guichet__item {
+	text-align: center;
+	flex: 1;
+}
+.stat-guichet__valeur {
+	display: block;
+	font-family: 'Playfair Display', serif;
+	font-weight: 800;
+	font-size: 1.2rem;
+	color: var(--vert-fvt);
+}
+.stat-guichet__label {
+	display: block;
+	font-family: 'Kumbh Sans', sans-serif;
+	font-size: 0.7rem;
+	color: #7a8a7f;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
 }
 
 /* ===== GRILLE ===== */
@@ -372,20 +679,40 @@ $temoignages = array(
 .realisation-card:hover .realisation-card__image img {
 	transform: scale(1.05);
 }
-.realisation-card__categorie {
+.realisation-card__statut {
 	position: absolute;
 	top: 14px;
 	right: 14px;
 	padding: 4px 14px;
 	border-radius: 20px;
-	background: rgba(0,0,0,0.6);
-	color: #fff;
 	font-family: 'Kumbh Sans', sans-serif;
 	font-size: 11px;
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
+	background: rgba(0,0,0,0.6);
+	color: #fff;
 	backdrop-filter: blur(4px);
+}
+.realisation-card__statut.termine {
+	background: rgba(10, 110, 62, 0.85);
+}
+.realisation-card__statut.encours {
+	background: rgba(243, 156, 18, 0.85);
+}
+.realisation-card__guichet {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 14px;
+	border-radius: 20px;
+	color: #fff;
+	font-family: 'Kumbh Sans', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.3px;
+	margin-bottom: 10px;
 }
 .realisation-card__content {
 	padding: 22px 24px 28px;
@@ -506,7 +833,7 @@ $temoignages = array(
 	content: '';
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(90deg, var(--vert-fvt) 0 33%, var(--jaune-fvt) 33% 66%, var(--rouge-fvt) 66% 100%);
+	background: linear-gradient(90deg, var(--vert-fvt) 0 25%, #1a7a3e 25% 50%, #0077be 50% 75%, #f39c12 75% 100%);
 	opacity: 0.06;
 }
 .realisations-cta h2 {
@@ -571,7 +898,10 @@ $temoignages = array(
 	.realisations-grid {
 		grid-template-columns: 1fr;
 	}
-	.realisations-stats {
+	.realisations-stats-globales {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.realisations-stats-guichets {
 		grid-template-columns: repeat(2, 1fr);
 	}
 	.temoignages-grid {
@@ -585,6 +915,9 @@ $temoignages = array(
 	.realisations-cta h2 {
 		font-size: 1.8rem;
 	}
+	.realisations-stats-guichets {
+		grid-template-columns: 1fr;
+	}
 }
 @media (max-width: 576px) {
 	.realisations-header h1 {
@@ -593,7 +926,7 @@ $temoignages = array(
 	.realisations-header__sub {
 		font-size: 1rem;
 	}
-	.realisations-stats {
+	.realisations-stats-globales {
 		grid-template-columns: 1fr 1fr;
 		gap: 12px;
 	}
@@ -606,5 +939,53 @@ $temoignages = array(
 	.impact-item__valeur {
 		font-size: 1rem;
 	}
+	.realisations-filtres {
+		gap: 8px;
+	}
+	.filtre-btn {
+		font-size: 0.8rem;
+		padding: 8px 14px;
+	}
 }
 </style>
+
+<!-- ============================================================
+     JAVASCRIPT : FILTRAGE DYNAMIQUE
+     ============================================================ -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const filtres = document.querySelectorAll('.filtre-btn');
+	const cartes = document.querySelectorAll('.realisation-card');
+	const statsGuichets = document.querySelectorAll('.stat-guichet');
+
+	filtres.forEach(filtre => {
+		filtre.addEventListener('click', function() {
+			// Désactiver tous les filtres
+			filtres.forEach(f => f.classList.remove('actif'));
+			this.classList.add('actif');
+
+			const guichet = this.dataset.guichet;
+
+			// Filtrer les cartes
+			cartes.forEach(carte => {
+				if (guichet === 'tous' || carte.dataset.guichet === guichet) {
+					carte.style.display = 'block';
+					carte.style.opacity = '0';
+					setTimeout(() => { carte.style.opacity = '1'; }, 50);
+				} else {
+					carte.style.display = 'none';
+				}
+			});
+
+			// Filtrer les statistiques par guichet
+			statsGuichets.forEach(stat => {
+				if (guichet === 'tous' || stat.dataset.guichet === guichet) {
+					stat.style.display = 'block';
+				} else {
+					stat.style.display = 'none';
+				}
+			});
+		});
+	});
+});
+</script>

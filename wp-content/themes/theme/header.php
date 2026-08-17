@@ -335,7 +335,7 @@
     gap: 18px;
 }
 
-/* Boutons Griefs et Plaintes 
+/* Boutons Griefs et Plaintes */
 .fvt-cta-btn--topbar {
     display: inline-flex;
     align-items: center;
@@ -352,7 +352,7 @@
     white-space: nowrap;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-}*/
+}
 
 .fvt-cta-btn--topbar:hover {
     background: #006A4F !important;
@@ -528,8 +528,8 @@
         /* Version responsive */
         @media (max-width: 768px) {
             .main-header__logo-badge {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
                 padding: 6px;
                 border-width: 3px;
             }
@@ -537,46 +537,12 @@
 
         @media (max-width: 480px) {
             .main-header__logo-badge {
-                width: 50px;
-                height: 50px;
+                width: 80px;
+                height: 80px;
                 padding: 4px;
                 border-width: 2.5px;
             }
         }
-        /* ========== LOGO (Armoiries du Togo) ========== */
-       /* .main-header__logo {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            text-decoration: none;
-        }
-        .main-header__logo-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: var(--fvt-white);
-            border: 8px solid var(--fvt-yellow);
-            border: 4px solid  #006A4F;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-            padding: 8px;
-            transition: transform .3s ease, box-shadow .3s ease;
-       /* }
-        .main-header__logo:hover .main-header__logo-badge {
-            transform: translateY(-2px) scale(1.04);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
-        }
-        .main-header__logo-badge img,
-        .main-header__logo-badge .custom-logo {
-            max-width: 100%;
-            max-height: 100%;
-            width: auto;
-            height: auto;
-            object-fit: contain;
-        } */
 
         /* ========== MENU PRINCIPAL ========== */
         .main-header__nav { flex: 1; display: flex; justify-content: center; min-width: 0; }
@@ -663,11 +629,24 @@
             transition: opacity .25s ease, transform .25s ease, visibility .25s ease;
             z-index: 99;
         }
+        /* Style pour les sous-menus de niveau 2 (sous "Guichet" et "Facilité") */
+        .main-menu__list .sub-menu .sub-menu {
+            left: 100%;
+            top: -8px;
+            transform: translateX(10px);
+            min-width: 220px;
+            border-top: none;
+            border-left: 3px solid var(--fvt-green);
+            border-radius: 0 12px 12px 12px;
+        }
         .main-menu__list .dropdown:hover > .sub-menu {
             opacity: 1;
             visibility: visible;
             transform: translate(-50%, 0);
             pointer-events: auto;
+        }
+        .main-menu__list .sub-menu .dropdown:hover > .sub-menu {
+            transform: translateX(0);
         }
         .main-menu__list .sub-menu li a {
             display: block;
@@ -686,6 +665,14 @@
             border-left-color: var(--fvt-yellow);
             color: var(--fvt-green-dark);
             padding-left: 28px;
+        }
+        /* Indicateur pour les sous-menus de niveau 2 */
+        .main-menu__list .sub-menu li.dropdown > a::after {
+            content: '›';
+            margin-left: auto;
+            font-size: 18px;
+            font-weight: 300;
+            color: #888;
         }
 
         /* ========== BADGE "ACTIF" ========== */
@@ -1030,7 +1017,7 @@
                     <?php if ( has_custom_logo() ) : ?>
                         <?php the_custom_logo(); ?>
                     <?php else : ?>
-                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logotgf.jpeg' ); ?>"
+                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logotgf.png' ); ?>"
                              alt="Armoiries du Togo - <?php bloginfo( 'name' ); ?>" />
                     <?php endif; ?>
                 </span>
@@ -1065,14 +1052,29 @@
                             
                         </ul>
                     </li>
-
+                   
+                    <!-- ===== MENU "INSTRUMENT FINANCIER" RÉORGANISÉ ===== -->
                     <li class="dropdown">
-                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet' ) ); ?>">Guichets</a>
+                        <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'instrument-financier' ) ); ?>">Guichets/Facilités</a>
                         <ul class="sub-menu">
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-agriculture' ) ); ?>">Agriculture Durable</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-foret' ) ); ?>">Forêt et Biodiversité</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-eau' ) ); ?>">Eau et Assainissement</a></li>
-                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-energie' ) ); ?>">Énergie et Infrastructures Durables</a></li>
+                            <!-- Sous-menu "Guichet" avec ses propres sous-menus -->
+                            <li class="dropdown">
+                                <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet' ) ); ?>">Guichets</a>
+                                <ul class="sub-menu">
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-agriculture' ) ); ?>">Agriculture Durable</a></li>
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-foret' ) ); ?>">Forêt et Biodiversité</a></li>
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-eau' ) ); ?>">Eau et Assainissement</a></li>
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'guichet-energie' ) ); ?>">Énergie et Infrastructures Durables</a></li>
+                                </ul>
+                            </li>
+                            <!-- Sous-menu "Facilité" avec ses propres sous-menus -->
+                            <li class="dropdown">
+                                <a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'facilite' ) ); ?>">Facilités</a>
+                                <ul class="sub-menu">
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'facilite-secteur-prive' ) ); ?>">Secteur Privé</a></li>
+                                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'facilite-collectivite-territoriale' ) ); ?>">Collectivité Territoriale</a></li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
 
@@ -1134,12 +1136,24 @@
                 </ul>
             </li>
             <li>
-                <a href="#" class="fvt-mobile-nav__parent">Guichet</a>
+                <a href="#" class="fvt-mobile-nav__parent">Guichet/Facilité</a>
                 <ul class="sub-menu">
-                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'agriculture-durable' ) ); ?>">Agriculture Durable</a></li>
-                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'foret-et-biodiversite' ) ); ?>">Forêt et Biodiversité</a></li>
-                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'eau-et-assainissement' ) ); ?>">Eau et Assainissement</a></li>
-                    <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructure Durable</a></li>
+                    <li>
+                        <a href="#" class="fvt-mobile-nav__parent">Guichet</a>
+                        <ul class="sub-menu">
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'agriculture-durable' ) ); ?>">Agriculture Durable</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'foret-et-biodiversite' ) ); ?>">Forêt et Biodiversité</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'eau-et-assainissement' ) ); ?>">Eau et Assainissement</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'energie-et-infrastructure-durable' ) ); ?>">Énergie et Infrastructure Durable</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#" class="fvt-mobile-nav__parent">Facilité</a>
+                        <ul class="sub-menu">
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'facilite-secteur-prive' ) ); ?>">Secteur Privé</a></li>
+                            <li><a href="<?php echo esc_url( fvt_get_page_url_by_slug( 'facilite-collectivite-territoriale' ) ); ?>">Collectivité Territoriale</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </li>
             <li>

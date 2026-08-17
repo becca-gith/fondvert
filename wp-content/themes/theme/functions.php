@@ -1805,6 +1805,56 @@ function fvt_soumission_statut_styles() {
         .statut--rejete { background: #f8d7da; color: #721c24; }
     </style>';
 }
+/**
+ * Ajout des métadonnées par défaut pour les pages de la facilité
+ */
+function fvt_setup_facilite_meta( $post_id ) {
+    // Vérifier si c'est une page de la facilité
+    $post = get_post( $post_id );
+    if ( ! $post || strpos( $post->post_name, 'facilite-' ) !== 0 ) {
+        return;
+    }
+    
+    // Éviter les sauvegardes automatiques
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+        return;
+    }
+    
+    // Préfixe dynamique
+    $prefix = str_replace( 'facilite-', '', $post->post_name );
+    $prefix = str_replace( '-', '_', $prefix );
+    
+    // Définir des métadonnées par défaut si elles n'existent pas déjà
+    if ( ! get_post_meta( $post_id, '_fvt_' . $prefix . '_chiffres', true ) ) {
+        $chiffres_default = array(
+            '100+' => 'Bénéficiaires',
+            '25'   => 'Projets financés',
+            '15'   => 'Partenaires',
+            '3'    => 'Années d\'activité'
+        );
+        update_post_meta( $post_id, '_fvt_' . $prefix . '_chiffres', $chiffres_default );
+    }
+    
+    if ( ! get_post_meta( $post_id, '_fvt_' . $prefix . '_projets', true ) ) {
+        $projets_default = array(
+            array(
+                'titre'        => 'Projet exemple ' . $prefix,
+                'description'  => 'Description du projet dans le cadre de la facilité.',
+                'localisation' => 'Lomé, Togo',
+                'categorie'    => 'Développement durable',
+                'statut'       => 'en_cours',
+                'image'        => 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&h=400&fit=crop',
+                'impact'       => array(
+                    '500' => 'Personnes impactées',
+                    '50'  => 'Emplois créés'
+                )
+            )
+        );
+        update_post_meta( $post_id, '_fvt_' . $prefix . '_projets', $projets_default );
+    }
+}
+add_action( 'save_post', 'fvt_setup_facilite_meta' );
+
 // ======================================================
 // FIN DU FICHIER
 // ======================================================

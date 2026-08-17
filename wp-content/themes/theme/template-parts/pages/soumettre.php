@@ -27,9 +27,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
     $step = intval($_POST['step']);
     $step_data = array();
     
-    // Récupération des champs selon l'étape
+    // Gestion des fichiers uploadés
+    $uploaded_files = array();
+    $upload_dir = wp_upload_dir();
+    $tgf_upload_dir = $upload_dir['basedir'] . '/tgf-soumissions/';
+    
+    // Créer le répertoire s'il n'existe pas
+    if (!file_exists($tgf_upload_dir)) {
+        wp_mkdir_p($tgf_upload_dir);
+    }
+    
+    // Fonction pour gérer l'upload de fichier
+    function handle_file_upload($file_key, $upload_dir, &$uploaded_files) {
+        if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
+            $file = $_FILES[$file_key];
+            $file_ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $file_name = sanitize_file_name(pathinfo($file['name'], PATHINFO_FILENAME));
+            $new_name = $file_name . '_' . uniqid() . '.' . $file_ext;
+            $destination = $upload_dir . $new_name;
+            
+            if (move_uploaded_file($file['tmp_name'], $destination)) {
+                $uploaded_files[$file_key] = $new_name;
+                return $file['name'];
+            }
+        }
+        return null;
+    }
+    
     switch($step) {
         case 1: // PORTEUR DE PROJET ET CONTACT
+            // Gestion des fichiers
+            $file_statuts = handle_file_upload('fichier_statuts', $tgf_upload_dir, $uploaded_files);
+            $file_pouvoir = handle_file_upload('fichier_pouvoir', $tgf_upload_dir, $uploaded_files);
+            $file_attestations = handle_file_upload('fichier_attestations', $tgf_upload_dir, $uploaded_files);
+            $file_autre = handle_file_upload('fichier_autre', $tgf_upload_dir, $uploaded_files);
+            
             $step_data = array(
                 'type_porteur' => sanitize_text_field($_POST['type_porteur'] ?? ''),
                 'presentation_porteur' => sanitize_textarea_field($_POST['presentation_porteur'] ?? ''),
@@ -42,6 +74,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'piece_pouvoir' => isset($_POST['piece_pouvoir']) ? 1 : 0,
                 'piece_attestations' => isset($_POST['piece_attestations']) ? 1 : 0,
                 'piece_autre' => sanitize_text_field($_POST['piece_autre'] ?? ''),
+                'fichier_statuts_nom' => $file_statuts,
+                'fichier_pouvoir_nom' => $file_pouvoir,
+                'fichier_attestations_nom' => $file_attestations,
+                'fichier_autre_nom' => $file_autre,
             );
             break;
         case 2: // IDENTIFICATION DU PROJET
@@ -61,9 +97,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'beneficiaires_directs' => sanitize_text_field($_POST['beneficiaires_directs'] ?? ''),
                 'beneficiaires_indirects' => sanitize_text_field($_POST['beneficiaires_indirects'] ?? ''),
                 'caracteristiques_cibles' => sanitize_textarea_field($_POST['caracteristiques_cibles'] ?? ''),
+                'impacts_attendus' => sanitize_textarea_field($_POST['impacts_attendus'] ?? ''),
             );
             break;
         case 4: // MISE EN ŒUVRE ET FINANCEMENT
+            $file_budget = handle_file_upload('fichier_budget', $tgf_upload_dir, $uploaded_files);
+            
             $step_data = array(
                 'date_demarrage' => sanitize_text_field($_POST['date_demarrage'] ?? ''),
                 'duree_mois' => sanitize_text_field($_POST['duree_mois'] ?? ''),
@@ -71,18 +110,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'montant_sollicite' => sanitize_text_field($_POST['montant_sollicite'] ?? ''),
                 'categorie_financement' => sanitize_text_field($_POST['categorie_financement'] ?? ''),
                 'autres_sources' => sanitize_textarea_field($_POST['autres_sources'] ?? ''),
+                'fichier_budget_nom' => $file_budget,
             );
             break;
         case 5: // VÉRIFICATION ET SOUMISSION
+            // Gestion des multiples fichiers
+            $fichiers_step5 = array();
+            $file_keys = ['fichier_fiscal', 'fichier_non_faillite', 'fichier_capacite', 'fichier_registre', 'fichier_budget_previsionnel'];
+            foreach ($file_keys as $key) {
+                $file = handle_file_upload($key, $tgf_upload_dir, $uploaded_files);
+                if ($file) {
+                    $fichiers_step5[$key . '_nom'] = $file;
+                }
+            }
+            
             $step_data = array(
                 'declaration' => isset($_POST['declaration']) ? 1 : 0,
                 'fait_a' => sanitize_text_field($_POST['fait_a'] ?? ''),
                 'date_signature' => sanitize_text_field($_POST['date_signature'] ?? ''),
                 'signature_nom' => sanitize_text_field($_POST['signature_nom'] ?? ''),
                 'signature_qualite' => sanitize_text_field($_POST['signature_qualite'] ?? ''),
-                'fichier' => $_FILES['fichier'] ?? null,
                 'commentaire' => sanitize_textarea_field($_POST['commentaire'] ?? ''),
             );
+            $step_data = array_merge($step_data, $fichiers_step5);
             break;
     }
     
@@ -490,53 +540,93 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 .form-group textarea.small {
     min-height: 60px;
 }
-.form-group input[type="file"] {
-    padding: 10px;
-    border: 1px dashed #dce8e0;
-    background: var(--gris-fond);
-}
-.form-group .helper {
-    font-size: 0.8rem;
-    color: #8a9a8f;
-    margin-top: 4px;
-}
-.form-group .char-count {
-    font-size: 0.8rem;
-    color: #8a9a8f;
-    text-align: right;
-    margin-top: 4px;
-}
-.form-group .word-count {
-    font-size: 0.8rem;
-    color: #8a9a8f;
-    text-align: right;
-    margin-top: 4px;
-}
-.form-check {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-top: 8px;
-    padding: 16px;
-    background: #f0f7f3;
+
+/* ===== STYLES UPLOAD AMÉLIORÉS ===== */
+.upload-item {
+    background: #fafcfa;
+    border: 1px solid #e7f0ea;
     border-radius: 12px;
-    border: 1px solid #dce8e0;
+    padding: 14px 18px;
+    transition: all 0.3s ease;
+    cursor: default;
 }
-.form-check input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin-top: 2px;
-    flex-shrink: 0;
-    accent-color: var(--vert-fvt);
+.upload-item:hover {
+    border-color: var(--vert-fvt) !important;
+    box-shadow: 0 2px 8px rgba(10, 110, 62, 0.08);
 }
-.form-check label {
-    font-weight: 400;
-    font-size: 0.9rem;
-    color: #2c3e34;
-    line-height: 1.5;
+.upload-item input[type="file"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px dashed #dce8e0;
+    border-radius: 8px;
+    background: #ffffff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
-.form-check label strong {
-    color: var(--vert-fvt-fonce);
+.upload-item input[type="file"]:hover {
+    border-color: var(--vert-fvt);
+    background: #f0f7f3;
+}
+.upload-item input[type="file"]:focus {
+    outline: none;
+    border-color: var(--vert-fvt);
+    box-shadow: 0 0 0 3px rgba(10, 110, 62, 0.15);
+}
+.upload-item input[type="file"]::file-selector-button {
+    background: var(--vert-fvt);
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Kumbh Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.8rem;
+    transition: background 0.3s;
+    margin-right: 12px;
+}
+.upload-item input[type="file"]::file-selector-button:hover {
+    background: var(--vert-fvt-fonce);
+}
+.file-name-display {
+    display: block;
+    font-size: 0.75rem;
+    color: #8a9a8f;
+    margin-top: 4px;
+    transition: all 0.3s;
+}
+.file-name-display.has-file {
+    color: var(--vert-fvt);
+}
+.file-name-display i {
+    margin-right: 4px;
+}
+.upload-item .helper {
+    font-size: 0.7rem;
+    color: #8a9a8f;
+    display: block;
+    margin-top: 4px;
+}
+.upload-item .helper i {
+    margin-right: 4px;
+}
+.upload-item .file-uploaded {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--vert-fvt);
+}
+.upload-item .file-uploaded i {
+    color: var(--vert-fvt);
+}
+.upload-item.has-file {
+    border-color: var(--vert-fvt);
+    background: #f0f7f3;
+}
+.upload-item.has-file input[type="file"] {
+    border-color: var(--vert-fvt);
 }
 
 /* ===== CHECKBOX GRID ===== */
@@ -799,6 +889,16 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
     .radio-grid {
         grid-template-columns: 1fr;
     }
+    .upload-item {
+        padding: 12px 14px;
+    }
+    .upload-item div[style*="flex-wrap"] {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+    .upload-item div[style*="min-width:200px"] {
+        min-width: 100% !important;
+    }
 }
 @media (max-width: 576px) {
     .soumission-header h1 {
@@ -937,18 +1037,6 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                     echo $titles[$current_step] ?? '';
                     ?>
                 </h2>
-                <!-- <p class="step-desc">
-                    <?php 
-                    $descs = array(
-                        1 => 'Conformément au point 7.3 du manuel, le porteur doit disposer d\'une existence légale et de capacités de gestion proportionnées au montant sollicité.',
-                        2 => 'Guichet thématique, titre, localisation et résumé du projet.',
-                        3 => 'Ces éléments sont notés par le comité thématique sur les critères « pertinence » et « cohérence technique » (40 points sur 100).',
-                        4 => 'Le montant sollicité détermine la catégorie de financement et le niveau d\'instruction applicable (section 7.1 du manuel).',
-                        5 => 'Vérifiez l\'ensemble des informations, joignez les pièces requises, signez et validez votre soumission.'
-                    );
-                    echo $descs[$current_step] ?? '';
-                    ?>
-                </p> -->
 
                 <form method="post" enctype="multipart/form-data">
                     <?php wp_nonce_field('fvt_soumission_action', 'fvt_soumission_nonce'); ?>
@@ -1032,26 +1120,35 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
         </div>
     </div>
 
-    <!-- Pièces jointes avec upload de fichiers -->
+    <!-- Pièces jointes avec upload de fichiers - VERSION AMÉLIORÉE -->
     <div class="form-group">
-        <label>Pièces jointes fournies</label>
-        <div style="margin-top:10px;">
+        <label>Pièces jointes fournies <span class="required">*</span></label>
+        <span class="label-hint">Veuillez joindre les documents requis ci-dessous</span>
+        
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:12px;">
+            
             <!-- Statuts / texte de création -->
-            <div style="background:#fafcfa;border:1px solid #e7f0ea;border-radius:12px;padding:12px 16px;margin-bottom:10px;">
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
-                    <div style="display:flex;align-items:center;gap:10px;min-width:180px;">
+            <div class="upload-item" id="upload-statuts">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;min-width:200px;flex:1;">
                         <input type="checkbox" id="piece_statuts" name="piece_statuts" 
+                               style="width:18px;height:18px;accent-color:var(--vert-fvt);"
                                <?php checked($current_data['piece_statuts'] ?? 0, 1); ?>>
-                        <label for="piece_statuts" style="margin:0;font-weight:500;">Statuts / texte de création</label>
+                        <label for="piece_statuts" style="margin:0;font-weight:600;font-size:0.9rem;color:var(--vert-fvt-fonce);cursor:pointer;">
+                            Statuts / texte de création
+                        </label>
                     </div>
-                    <div style="flex:1;min-width:200px;">
+                    <div style="flex:2;min-width:200px;">
                         <input type="file" id="fichier_statuts" name="fichier_statuts" 
                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                               style="width:100%;padding:6px;border:1px dashed #dce8e0;border-radius:8px;background:var(--gris-fond);font-size:0.85rem;">
-                        <span class="helper" style="font-size:0.75rem;">PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
+                               onchange="updateFileName(this, 'statuts-file-name', 'upload-statuts')">
+                        <span id="statuts-file-name" class="file-name-display">
+                            <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                        </span>
+                        <span class="helper"><i class="fas fa-file-alt"></i> PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
                     </div>
                     <?php if (!empty($current_data['fichier_statuts_nom'])) : ?>
-                        <span style="font-size:0.8rem;color:var(--vert-fvt);">
+                        <span class="file-uploaded">
                             <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_statuts_nom']); ?>
                         </span>
                     <?php endif; ?>
@@ -1059,21 +1156,27 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
             </div>
 
             <!-- Pouvoir du signataire -->
-            <div style="background:#fafcfa;border:1px solid #e7f0ea;border-radius:12px;padding:12px 16px;margin-bottom:10px;">
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
-                    <div style="display:flex;align-items:center;gap:10px;min-width:180px;">
+            <div class="upload-item" id="upload-pouvoir">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;min-width:200px;flex:1;">
                         <input type="checkbox" id="piece_pouvoir" name="piece_pouvoir" 
+                               style="width:18px;height:18px;accent-color:var(--vert-fvt);"
                                <?php checked($current_data['piece_pouvoir'] ?? 0, 1); ?>>
-                        <label for="piece_pouvoir" style="margin:0;font-weight:500;">Pouvoir du signataire</label>
+                        <label for="piece_pouvoir" style="margin:0;font-weight:600;font-size:0.9rem;color:var(--vert-fvt-fonce);cursor:pointer;">
+                            Pouvoir du signataire
+                        </label>
                     </div>
-                    <div style="flex:1;min-width:200px;">
+                    <div style="flex:2;min-width:200px;">
                         <input type="file" id="fichier_pouvoir" name="fichier_pouvoir" 
                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                               style="width:100%;padding:6px;border:1px dashed #dce8e0;border-radius:8px;background:var(--gris-fond);font-size:0.85rem;">
-                        <span class="helper" style="font-size:0.75rem;">PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
+                               onchange="updateFileName(this, 'pouvoir-file-name', 'upload-pouvoir')">
+                        <span id="pouvoir-file-name" class="file-name-display">
+                            <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                        </span>
+                        <span class="helper"><i class="fas fa-file-alt"></i> PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
                     </div>
                     <?php if (!empty($current_data['fichier_pouvoir_nom'])) : ?>
-                        <span style="font-size:0.8rem;color:var(--vert-fvt);">
+                        <span class="file-uploaded">
                             <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_pouvoir_nom']); ?>
                         </span>
                     <?php endif; ?>
@@ -1081,21 +1184,27 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
             </div>
 
             <!-- Attestations fiscales et sociales -->
-            <div style="background:#fafcfa;border:1px solid #e7f0ea;border-radius:12px;padding:12px 16px;margin-bottom:10px;">
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
-                    <div style="display:flex;align-items:center;gap:10px;min-width:180px;">
+            <div class="upload-item" id="upload-attestations">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;min-width:200px;flex:1;">
                         <input type="checkbox" id="piece_attestations" name="piece_attestations" 
+                               style="width:18px;height:18px;accent-color:var(--vert-fvt);"
                                <?php checked($current_data['piece_attestations'] ?? 0, 1); ?>>
-                        <label for="piece_attestations" style="margin:0;font-weight:500;">Attestations fiscales et sociales</label>
+                        <label for="piece_attestations" style="margin:0;font-weight:600;font-size:0.9rem;color:var(--vert-fvt-fonce);cursor:pointer;">
+                            Attestations fiscales et sociales
+                        </label>
                     </div>
-                    <div style="flex:1;min-width:200px;">
+                    <div style="flex:2;min-width:200px;">
                         <input type="file" id="fichier_attestations" name="fichier_attestations" 
                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                               style="width:100%;padding:6px;border:1px dashed #dce8e0;border-radius:8px;background:var(--gris-fond);font-size:0.85rem;">
-                        <span class="helper" style="font-size:0.75rem;">PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
+                               onchange="updateFileName(this, 'attestations-file-name', 'upload-attestations')">
+                        <span id="attestations-file-name" class="file-name-display">
+                            <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                        </span>
+                        <span class="helper"><i class="fas fa-file-alt"></i> PDF, DOC, DOCX, JPG, PNG — Max 5 Mo</span>
                     </div>
                     <?php if (!empty($current_data['fichier_attestations_nom'])) : ?>
-                        <span style="font-size:0.8rem;color:var(--vert-fvt);">
+                        <span class="file-uploaded">
                             <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_attestations_nom']); ?>
                         </span>
                     <?php endif; ?>
@@ -1103,32 +1212,39 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
             </div>
 
             <!-- Autre(s) -->
-            <div style="background:#fafcfa;border:1px solid #e7f0ea;border-radius:12px;padding:12px 16px;margin-bottom:10px;">
-                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;">
-                    <div style="display:flex;align-items:center;gap:10px;min-width:180px;">
+            <div class="upload-item" id="upload-autre">
+                <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+                    <div style="display:flex;align-items:center;gap:10px;min-width:200px;flex:1;">
                         <input type="checkbox" id="piece_autre_check" name="piece_autre_check" 
-                               <?php checked(isset($current_data['piece_autre']) && !empty($current_data['piece_autre']), true); ?>>
-                        <label for="piece_autre_check" style="margin:0;font-weight:500;">
-                            Autre(s) : 
-                            <input type="text" id="piece_autre" name="piece_autre" 
-                                   placeholder="Précisez" 
-                                   style="display:inline-block;width:150px;padding:4px 8px;margin-left:4px;border:1px solid #dce8e0;border-radius:6px;font-size:0.9rem;"
-                                   value="<?php echo esc_attr($current_data['piece_autre'] ?? ''); ?>">
+                               style="width:18px;height:18px;accent-color:var(--vert-fvt);"
+                               <?php checked(isset($current_data['piece_autre']) && !empty($current_data['piece_autre']), true); ?>
+                               onchange="toggleAutreInput(this)">
+                        <label for="piece_autre_check" style="margin:0;font-weight:600;font-size:0.9rem;color:var(--vert-fvt-fonce);cursor:pointer;">
+                            Autre(s)
                         </label>
+                        <input type="text" id="piece_autre" name="piece_autre" 
+                               placeholder="Précisez..." 
+                               style="flex:1;min-width:120px;padding:6px 12px;border:1px solid #dce8e0;border-radius:6px;font-size:0.85rem;background:#ffffff;transition:all 0.3s;"
+                               value="<?php echo esc_attr($current_data['piece_autre'] ?? ''); ?>"
+                               <?php echo (isset($current_data['piece_autre']) && !empty($current_data['piece_autre'])) ? '' : 'disabled'; ?>>
                     </div>
-                    <div style="flex:1;min-width:200px;">
+                    <div style="flex:2;min-width:200px;">
                         <input type="file" id="fichier_autre" name="fichier_autre" 
                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.zip"
-                               style="width:100%;padding:6px;border:1px dashed #dce8e0;border-radius:8px;background:var(--gris-fond);font-size:0.85rem;">
-                        <span class="helper" style="font-size:0.75rem;">PDF, DOC, DOCX, JPG, PNG, ZIP — Max 10 Mo</span>
+                               onchange="updateFileName(this, 'autre-file-name', 'upload-autre')">
+                        <span id="autre-file-name" class="file-name-display">
+                            <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                        </span>
+                        <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, JPG, PNG, ZIP — Max 10 Mo</span>
                     </div>
                     <?php if (!empty($current_data['fichier_autre_nom'])) : ?>
-                        <span style="font-size:0.8rem;color:var(--vert-fvt);">
+                        <span class="file-uploaded">
                             <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_autre_nom']); ?>
                         </span>
                     <?php endif; ?>
                 </div>
             </div>
+
         </div>
     </div>
     
@@ -1250,8 +1366,8 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 
                         <div class="form-group">
                             <label for="impacts_attendus">Impacts attendus <span class="required">*</span></label>
-                            <textarea id="caracteristiques_cibles" name="caracteristiques_cibles" rows="3" 
-                                      placeholder="Impact attendus" required><?php echo esc_textarea($current_data['caracteristiques_cibles'] ?? ''); ?></textarea>
+                            <textarea id="impacts_attendus" name="impacts_attendus" rows="3" 
+                                      placeholder="Impact attendus" required><?php echo esc_textarea($current_data['impacts_attendus'] ?? ''); ?></textarea>
                         </div>
 
                     <?php elseif ($current_step === 4) : ?>
@@ -1260,7 +1376,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                         <div style="background:#e8f0fe;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid #1a73e8;">
                             <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
                                 <i class="fas fa-info-circle" style="color:#1a73e8;"></i> 
-                                <strong>Information :</strong> Le montant sollicité détermine la catégorie de financement et le niveau d'instruction applicable (section 7.1 du manuel).
+                                <strong>Information :</strong> Le montant sollicité détermine la catégorie de financement et le niveau d'instruction applicable.
                             </p>
                         </div>
 
@@ -1305,6 +1421,25 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                                     <label for="categorie_<?php echo sanitize_title($categorie); ?>"><?php echo esc_html($categorie); ?></label>
                                 </div>
                                 <?php endforeach; ?>
+                            </div>
+                        </div>
+
+                        <!-- Fiche de budget -->
+                        <div class="form-group">
+                            <label for="fichier_budget">Fiche de budget (préalablement rempli)</label>
+                            <div class="upload-item" id="upload-budget">
+                                <input type="file" id="fichier_budget" name="fichier_budget" 
+                                       accept=".pdf,.doc,.docx,.zip"
+                                       onchange="updateFileName(this, 'budget-file-name', 'upload-budget')">
+                                <span id="budget-file-name" class="file-name-display">
+                                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                </span>
+                                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                <?php if (!empty($current_data['fichier_budget_nom'])) : ?>
+                                    <span class="file-uploaded">
+                                        <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_budget_nom']); ?>
+                                    </span>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -1370,29 +1505,68 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                                       placeholder="Informations complémentaires éventuelles..."><?php echo esc_textarea($current_data['commentaire'] ?? ''); ?></textarea>
                         </div>
 
-                        <!-- Pièces jointes -->
-                        <div><label for="fichier"><strong>Pièces jointes</strong></label>
-                            <div class="form-group">
-                                <label for="fichier">Attestation de non-faillite</label>
-                                <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.zip">
-                                <span class="helper">Formats acceptés : PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                            </div>
-                            <div class="form-group">
-                                <label for="fichier">Attestation de régularité fiscale</label>
-                                <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.zip">
-                                <span class="helper">Formats acceptés : PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                            </div>
-                            <div class="form-group">
-                                <label for="fichier">Attestation de régularité fiscale</label>
-                                <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.zip">
-                                <span class="helper">Formats acceptés : PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                            </div>
+                        <!-- Pièces jointes Étape 5 -->
+                        <div class="form-group">
+                            <label>Pièces jointes complémentaires</label>
+                            <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+                                
+                                <div class="upload-item" id="upload-fiscal">
+                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de régularité fiscale</label>
+                                    <input type="file" id="fichier_fiscal" name="fichier_fiscal" 
+                                           accept=".pdf,.doc,.docx,.zip"
+                                           onchange="updateFileName(this, 'fiscal-file-name', 'upload-fiscal')">
+                                    <span id="fiscal-file-name" class="file-name-display">
+                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                    </span>
+                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                </div>
 
-                        </div> <div class="form-group">
-                                <label for="fichier">Attestation de régularité fiscale</label>
-                                <input type="file" id="fichier" name="fichier" accept=".pdf,.doc,.docx,.zip">
-                                <span class="helper">Formats acceptés : PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                <div class="upload-item" id="upload-non-faillite">
+                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de non-faillite</label>
+                                    <input type="file" id="fichier_non_faillite" name="fichier_non_faillite" 
+                                           accept=".pdf,.doc,.docx,.zip"
+                                           onchange="updateFileName(this, 'non-faillite-file-name', 'upload-non-faillite')">
+                                    <span id="non-faillite-file-name" class="file-name-display">
+                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                    </span>
+                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                </div>
+
+                                <div class="upload-item" id="upload-capacite">
+                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de capacité financière</label>
+                                    <input type="file" id="fichier_capacite" name="fichier_capacite" 
+                                           accept=".pdf,.doc,.docx,.zip"
+                                           onchange="updateFileName(this, 'capacite-file-name', 'upload-capacite')">
+                                    <span id="capacite-file-name" class="file-name-display">
+                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                    </span>
+                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                </div>
+
+                                <div class="upload-item" id="upload-registre">
+                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Extrait récent du registre du commerce ou document équivalent</label>
+                                    <input type="file" id="fichier_registre" name="fichier_registre" 
+                                           accept=".pdf,.doc,.docx,.zip"
+                                           onchange="updateFileName(this, 'registre-file-name', 'upload-registre')">
+                                    <span id="registre-file-name" class="file-name-display">
+                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                    </span>
+                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                </div>
+
+                                <div class="upload-item" id="upload-budget-previsionnel">
+                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Budget prévisionnel détaillé par composante et/ou activité</label>
+                                    <input type="file" id="fichier_budget_previsionnel" name="fichier_budget_previsionnel" 
+                                           accept=".pdf,.doc,.docx,.zip"
+                                           onchange="updateFileName(this, 'budget-previsionnel-file-name', 'upload-budget-previsionnel')">
+                                    <span id="budget-previsionnel-file-name" class="file-name-display">
+                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                                    </span>
+                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+                                </div>
+
                             </div>
+                        </div>
 
                         <!-- Déclaration -->
                         <div class="form-check" style="background:#fff8e7;border-color:var(--jaune-fvt);">
@@ -1476,6 +1650,53 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
      ============================================================ -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Fonction pour mettre à jour le nom du fichier sélectionné
+    window.updateFileName = function(input, spanId, containerId) {
+        const span = document.getElementById(spanId);
+        const container = document.getElementById(containerId);
+        if (span) {
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0];
+                const fileSize = (file.size / 1024 / 1024).toFixed(1);
+                const fileIcon = file.type.includes('pdf') ? 'fa-file-pdf' : 
+                                 file.type.includes('zip') ? 'fa-file-archive' :
+                                 file.type.includes('doc') ? 'fa-file-word' :
+                                 file.type.includes('image') ? 'fa-file-image' : 'fa-file';
+                span.innerHTML = `<i class="fas ${fileIcon}"></i> ${file.name} (${fileSize} Mo)`;
+                span.className = 'file-name-display has-file';
+                
+                if (container) {
+                    container.classList.add('has-file');
+                }
+            } else {
+                span.innerHTML = '<i class="fas fa-paperclip"></i> Aucun fichier sélectionné';
+                span.className = 'file-name-display';
+                
+                if (container) {
+                    container.classList.remove('has-file');
+                }
+            }
+        }
+    };
+
+    // Fonction pour activer/désactiver le champ "Autre"
+    window.toggleAutreInput = function(checkbox) {
+        const input = document.getElementById('piece_autre');
+        if (input) {
+            if (checkbox.checked) {
+                input.disabled = false;
+                input.focus();
+                input.style.borderColor = 'var(--vert-fvt)';
+                input.style.boxShadow = '0 0 0 3px rgba(10, 110, 62, 0.1)';
+            } else {
+                input.disabled = true;
+                input.value = '';
+                input.style.borderColor = '#dce8e0';
+                input.style.boxShadow = 'none';
+            }
+        }
+    };
+
     // Compteur de mots pour le résumé
     const resumeTextarea = document.getElementById('resume');
     if (resumeTextarea) {
@@ -1491,7 +1712,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     wordCountDisplay.style.color = '#8a9a8f';
                 }
             }
-            if (words > 150) {
+            if (words > 250) {
                 resumeTextarea.style.borderColor = '#D21034';
                 resumeTextarea.style.boxShadow = '0 0 0 3px rgba(210,16,52,0.1)';
             } else {
@@ -1572,7 +1793,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Navigation entre étapes
     const stepItems = document.querySelectorAll('.step-item');
-    stepItems.forEach(function(item, index) {
+    stepItems.forEach(function(item) {
         item.addEventListener('click', function(e) {
             const isCompleted = this.classList.contains('completed');
             const isActive = this.classList.contains('active');
@@ -1582,17 +1803,5 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
-    // Prévisualisation du fichier
-    const fileInput = document.getElementById('fichier');
-    if (fileInput) {
-        fileInput.addEventListener('change', function() {
-            const fileName = this.files[0] ? this.files[0].name : 'Aucun fichier sélectionné';
-            const helper = this.closest('.form-group').querySelector('.helper');
-            if (helper) {
-                helper.textContent = 'Fichier sélectionné : ' + fileName + ' (Max 10 Mo)';
-            }
-        });
-    }
 });
 </script>
