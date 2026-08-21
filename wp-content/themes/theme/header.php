@@ -469,81 +469,104 @@
             margin: 0;
         }
 
-        /* ========== LOGO - Version premium avec animations ========== */
+        
+        /* ========== LOGO - Version rectangle complète ========== */
         .main-header__logo {
             flex-shrink: 0;
             display: flex;
             align-items: center;
-            gap: 14px;
             text-decoration: none;
+            max-width: 180px; /* Ajustez selon la taille souhaitée */
+            width: 50%;
         }
 
         .main-header__logo-badge {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%; /* Rond parfait */
-            background: var(--fvt-white);
-            border: 4px solid  #006A4F;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-            padding: 8px;
-            overflow: hidden; /* Cache les débordements */
+            width: 100%;
+            height: auto;
+            min-height: 80px;
+            background: transparent; /* Fond transparent pour l'image */
+            border: none; /* Supprime la bordure si vous voulez */
+            /* OU si vous voulez garder une bordure fine */
+            /* border: 2px solid #006A4F; */
+            /* border-radius: 8px; */
+            padding: 5px 10px;
+            overflow: visible; /* Important pour ne pas couper l'image */
             transition: all 0.3s ease;
             position: relative;
+            box-shadow: none; /* Supprime l'ombre si gênante */
         }
 
-        /* Effet de brillance au survol */
-        .main-header__logo-badge::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 60%);
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .main-header__logo:hover .main-header__logo-badge::after {
-            opacity: 1;
-        }
-
+        /* Effet de survol simplifié */
         .main-header__logo:hover .main-header__logo-badge {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-            border-color: var(--fvt-green);
+            transform: scale(1.02);
+            opacity: 0.95;
         }
 
+        /* Style pour l'image du logo */
         .main-header__logo-badge img,
         .main-header__logo-badge .custom-logo {
             width: 100%;
-            height: 100%;
-            object-fit: cover; /* L'image remplit le cercle */
-            border-radius: 50%; /* L'image suit la forme du conteneur */
+            height: auto;
+            max-height: 90px;
+            object-fit: contain; /* Garde les proportions */
+            object-position: center;
+            display: block;
         }
 
-        /* Version responsive */
-        @media (max-width: 768px) {
+        /* Si vous utilisez un logo avec texte, pour qu'il soit bien visible */
+        .main-header__logo-badge .custom-logo {
+            max-width: 100%;
+        }
+
+        /* Version responsive tablette */
+        @media (max-width: 1199px) {
+            .main-header__logo {
+                max-width: 220px;
+                min-width: 160px;
+            }
             .main-header__logo-badge {
-                width: 70px;
-                height: 70px;
-                padding: 6px;
-                border-width: 3px;
+                min-height: 65px;
+                padding: 4px 8px;
+            }
+            .main-header__logo-badge img,
+            .main-header__logo-badge .custom-logo {
+                max-height: 65px;
+            }
+        }
+
+        /* Version responsive mobile */
+        @media (max-width: 768px) {
+            .main-header__logo {
+                max-width: 180px;
+                min-width: 140px;
+            }
+            .main-header__logo-badge {
+                min-height: 55px;
+                padding: 3px 6px;
+            }
+            .main-header__logo-badge img,
+            .main-header__logo-badge .custom-logo {
+                max-height: 55px;
             }
         }
 
         @media (max-width: 480px) {
+            .main-header__logo {
+                max-width: 150px;
+                min-width: 120px;
+            }
             .main-header__logo-badge {
-                width: 80px;
-                height: 80px;
-                padding: 4px;
-                border-width: 2.5px;
+                min-height: 45px;
+                padding: 2px 5px;
+            }
+            .main-header__logo-badge img,
+            .main-header__logo-badge .custom-logo {
+                max-height: 45px;
             }
         }
-
         /* ========== MENU PRINCIPAL ========== */
         .main-header__nav { flex: 1; display: flex; justify-content: center; min-width: 0; }
         .main-menu__list {
@@ -1017,7 +1040,7 @@
                     <?php if ( has_custom_logo() ) : ?>
                         <?php the_custom_logo(); ?>
                     <?php else : ?>
-                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logotgf.png' ); ?>"
+                        <img src="<?php echo esc_url( get_template_directory_uri() . '/assets/images/logotgfjj.png' ); ?>"
                              alt="Armoiries du Togo - <?php bloginfo( 'name' ); ?>" />
                     <?php endif; ?>
                 </span>

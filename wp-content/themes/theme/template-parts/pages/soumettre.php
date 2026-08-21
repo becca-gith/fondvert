@@ -1,19 +1,20 @@
 <?php
 /**
- * Template part : Page "Soumettre un projet" – Processus en 5 étapes
- * Ordre : 1-Porteur, 2-Identification, 3-Problématique, 4-Mise en œuvre, 5-Vérification
+ * Template part : Page "Soumettre un projet" – Processus en 7 étapes
+ * Ordre : 1-Porteur, 2-Identification, 3-Problématique, 4-Bénéficiaires, 
+ *         5-Durabilité, 6-Mise en œuvre, 7-Vérification
  * Conforme au formulaire officiel TGF_Formulaire_Soumission_Projet
  *
  * @package TogoGreenFund
  */
 
-// Récupération de l'étape courante (1-5), par défaut 1
+// Récupération de l'étape courante (1-7), par défaut 1
 $current_step = isset($_GET['step']) ? intval($_GET['step']) : 1;
-if ($current_step < 1 || $current_step > 5) $current_step = 1;
+if ($current_step < 1 || $current_step > 7) $current_step = 1;
 
 // Données du formulaire stockées en session ou en hidden fields
 $form_data = array();
-for ($i = 1; $i <= 5; $i++) {
+for ($i = 1; $i <= 7; $i++) {
     $step_key = 'step_' . $i . '_data';
     if (isset($_POST[$step_key])) {
         $form_data[$i] = json_decode(stripslashes($_POST[$step_key]), true);
@@ -56,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
     
     switch($step) {
         case 1: // PORTEUR DE PROJET ET CONTACT
-            // Gestion des fichiers
             $file_statuts = handle_file_upload('fichier_statuts', $tgf_upload_dir, $uploaded_files);
             $file_pouvoir = handle_file_upload('fichier_pouvoir', $tgf_upload_dir, $uploaded_files);
             $file_attestations = handle_file_upload('fichier_attestations', $tgf_upload_dir, $uploaded_files);
@@ -90,17 +90,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'resume' => sanitize_textarea_field($_POST['resume'] ?? ''),
             );
             break;
-        case 3: // PROBLÉMATIQUE ET OBJECTIFS
+        case 3: // PROBLÉMATIQUE ET OBJECTIFS ET ALIGNEMENT STRATEGIQUE
             $step_data = array(
                 'problematique' => sanitize_textarea_field($_POST['problematique'] ?? ''),
+                'lien_priorites' => sanitize_textarea_field($_POST['lien_priorites'] ?? ''),
                 'objectifs_resultats' => sanitize_textarea_field($_POST['objectifs_resultats'] ?? ''),
+                'theorie_changement' => sanitize_textarea_field($_POST['theorie_changement'] ?? ''),
+                'impact_attendu' => sanitize_textarea_field($_POST['impact_attendu'] ?? ''),
+            );
+            break;
+        case 4: // BÉNÉFICIAIRES ET INCLUSION
+            $step_data = array(
                 'beneficiaires_directs' => sanitize_text_field($_POST['beneficiaires_directs'] ?? ''),
                 'beneficiaires_indirects' => sanitize_text_field($_POST['beneficiaires_indirects'] ?? ''),
                 'caracteristiques_cibles' => sanitize_textarea_field($_POST['caracteristiques_cibles'] ?? ''),
-                'impacts_attendus' => sanitize_textarea_field($_POST['impacts_attendus'] ?? ''),
+                'implication_communautes' => sanitize_textarea_field($_POST['implication_communautes'] ?? ''),
+                'prise_compte_genre' => sanitize_textarea_field($_POST['prise_compte_genre'] ?? ''),
             );
             break;
-        case 4: // MISE EN ŒUVRE ET FINANCEMENT
+        case 5: // DURABILITÉ ET MAÎTRISE DES RISQUES
+            $step_data = array(
+                'perennite_innovant' => sanitize_textarea_field($_POST['perennite_innovant'] ?? ''),
+                'risques_environnementaux' => sanitize_textarea_field($_POST['risques_environnementaux'] ?? ''),
+            );
+            break;
+        case 6: // MISE EN ŒUVRE ET FINANCEMENT
             $file_budget = handle_file_upload('fichier_budget', $tgf_upload_dir, $uploaded_files);
             
             $step_data = array(
@@ -113,14 +127,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'fichier_budget_nom' => $file_budget,
             );
             break;
-        case 5: // VÉRIFICATION ET SOUMISSION
-            // Gestion des multiples fichiers
-            $fichiers_step5 = array();
+        case 7: // VÉRIFICATION ET SOUMISSION
+            $fichiers_step7 = array();
             $file_keys = ['fichier_fiscal', 'fichier_non_faillite', 'fichier_capacite', 'fichier_registre', 'fichier_budget_previsionnel'];
             foreach ($file_keys as $key) {
                 $file = handle_file_upload($key, $tgf_upload_dir, $uploaded_files);
                 if ($file) {
-                    $fichiers_step5[$key . '_nom'] = $file;
+                    $fichiers_step7[$key . '_nom'] = $file;
                 }
             }
             
@@ -132,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
                 'signature_qualite' => sanitize_text_field($_POST['signature_qualite'] ?? ''),
                 'commentaire' => sanitize_textarea_field($_POST['commentaire'] ?? ''),
             );
-            $step_data = array_merge($step_data, $fichiers_step5);
+            $step_data = array_merge($step_data, $fichiers_step7);
             break;
     }
     
@@ -141,8 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_step'])) {
     $step_data_json = json_encode($step_data);
     
     // Redirection vers l'étape suivante ou soumission finale
-    if ($step === 5 && isset($_POST['submit_final'])) {
-        // Traitement final de soumission
+    if ($step === 7 && isset($_POST['submit_final'])) {
         $success_ref = 'TGF-' . date('Y') . '-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT);
         wp_redirect(add_query_arg('soumission_success', $success_ref, get_permalink()));
         exit;
@@ -278,7 +290,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto;
     position: relative;
 }
@@ -300,7 +312,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
     background: var(--vert-fvt);
     z-index: 1;
     transition: width 0.6s ease;
-    width: <?php echo (($current_step - 1) / 4) * 100; ?>%;
+    width: <?php echo (($current_step - 1) / 6) * 100; ?>%;
 }
 .step-item {
     display: flex;
@@ -342,14 +354,14 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 }
 .step-item__label {
     font-family: 'Kumbh Sans', sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 600;
     color: #8a9a8f;
     margin-top: 8px;
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.3px;
-    max-width: 80px;
+    max-width: 70px;
     line-height: 1.3;
 }
 .step-item.active .step-item__label {
@@ -539,6 +551,15 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 }
 .form-group textarea.small {
     min-height: 60px;
+}
+.helper {
+    font-size: 0.75rem;
+    color: #8a9a8f;
+    display: block;
+    margin-top: 4px;
+}
+.helper i {
+    margin-right: 4px;
 }
 
 /* ===== STYLES UPLOAD AMÉLIORÉS ===== */
@@ -747,7 +768,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 /* ===== RÉSUMÉ FINAL ===== */
 .summary-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
     margin: 20px 0;
 }
@@ -772,13 +793,13 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
     font-family: 'Kumbh Sans', sans-serif;
     color: #2c3e34;
     margin: 0 0 4px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.5;
 }
 .summary-card .label {
     font-weight: 600;
     color: var(--vert-fvt);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     display: block;
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -842,7 +863,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
         gap: 0;
     }
     .summary-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
     }
     .checkbox-grid,
     .radio-grid {
@@ -859,8 +880,8 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
         padding: 0 10px;
     }
     .step-item__label {
-        font-size: 8px;
-        max-width: 50px;
+        font-size: 7px;
+        max-width: 45px;
     }
     .step-item__circle {
         width: 32px;
@@ -899,19 +920,22 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
     .upload-item div[style*="min-width:200px"] {
         min-width: 100% !important;
     }
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
 }
 @media (max-width: 576px) {
     .soumission-header h1 {
         font-size: 1.6rem;
     }
     .step-item__label {
-        font-size: 7px;
-        max-width: 40px;
+        font-size: 6px;
+        max-width: 35px;
     }
     .step-item__circle {
-        width: 28px;
-        height: 28px;
-        font-size: 10px;
+        width: 26px;
+        height: 26px;
+        font-size: 9px;
     }
 }
 </style>
@@ -925,13 +949,13 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
         <h1>Soumettre un projet</h1>
         <div class="title-underline"></div>
         <p style="font-family:'Kumbh Sans',sans-serif;color:#5a6a5f;margin-top:12px;">
-            Note conceptuelle — Fiche de soumission de projet en 5 étapes
+            Note conceptuelle — Fiche de soumission de projet en 7 étapes
         </p>
     </div>
 </section>
 
 <!-- ============================================================
-     BARRE DE PROGRESSION
+     BARRE DE PROGRESSION - 7 ÉTAPES
      ============================================================ -->
 <section class="step-progress">
     <div class="container">
@@ -942,10 +966,12 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                 1 => 'Porteur de<br>projet & Contact',
                 2 => 'Identification<br>du projet',
                 3 => 'Problématique<br>& Objectifs',
-                4 => 'Mise en œuvre<br>& Financement',
-                5 => 'Vérification<br>& Soumission'
+                4 => 'Bénéficiaires<br>& Inclusion',
+                5 => 'Durabilité &<br>Maîtrise des risques',
+                6 => 'Mise en œuvre<br>& Financement',
+                7 => 'Vérification<br>& Soumission'
             );
-            for ($i = 1; $i <= 5; $i++) :
+            for ($i = 1; $i <= 7; $i++) :
                 $status = '';
                 if ($i == $current_step) $status = 'active';
                 elseif (in_array($i, $completed_steps)) $status = 'completed';
@@ -997,16 +1023,18 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                 <div class="soumission-info__step-hint">
                     <strong>
                         <i class="fas fa-lightbulb"></i> 
-                        Étape <?php echo $current_step; ?> / 5
+                        Étape <?php echo $current_step; ?> / 7
                     </strong>
                     <p>
                         <?php 
                         $hints = array(
                             1 => 'Informations sur le porteur du projet (existence légale requise).',
                             2 => 'Guichet, titre, localisation et résumé du projet.',
-                            3 => 'Problématique, objectifs et bénéficiaires (critères de pertinence - 40 points).',
-                            4 => 'Budget, durée, catégorie de financement et sources de financement.',
-                            5 => 'Vérifiez toutes les informations, signez et soumettez votre dossier.'
+                            3 => 'Problématique, objectifs, alignement stratégique (critères de pertinence - 40 points).',
+                            4 => 'Bénéficiaires, inclusion, genre et ancrage local (critère - 15 points).',
+                            5 => 'Durabilité, innovation et maîtrise des risques (critère - 15 points).',
+                            6 => 'Budget, durée, catégorie de financement et sources de financement.',
+                            7 => 'Vérifiez toutes les informations, signez et soumettez votre dossier.'
                         );
                         echo $hints[$current_step] ?? '';
                         ?>
@@ -1024,15 +1052,17 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
 
             <!-- FORMULAIRE -->
             <div class="soumission-form">
-                <span class="step-indicator">Étape <?php echo $current_step; ?> / 5</span>
+                <span class="step-indicator">Étape <?php echo $current_step; ?> / 7</span>
                 <h2>
                     <?php 
                     $titles = array(
                         1 => '1. Porteur de projet et Contact',
                         2 => '2. Identification du projet',
                         3 => '3. Problématique et Objectifs',
-                        4 => '4. Mise en œuvre et Financement',
-                        5 => '5. Vérification et Soumission'
+                        4 => '4. Bénéficiaires et Inclusion',
+                        5 => '5. Durabilité et Maîtrise des risques',
+                        6 => '6. Mise en œuvre et Financement',
+                        7 => '7. Vérification et Soumission'
                     );
                     echo $titles[$current_step] ?? '';
                     ?>
@@ -1120,7 +1150,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
         </div>
     </div>
 
-    <!-- Pièces jointes avec upload de fichiers - VERSION AMÉLIORÉE -->
+    <!-- Pièces jointes avec upload de fichiers -->
     <div class="form-group">
         <label>Pièces jointes fournies <span class="required">*</span></label>
         <span class="label-hint">Veuillez joindre les documents requis ci-dessous</span>
@@ -1319,300 +1349,376 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                         </div>
 
                     <?php elseif ($current_step === 3) : ?>
-                        <!-- ÉTAPE 3 : PROBLÉMATIQUE ET OBJECTIFS -->
-                        
-                        <div style="background:#fff8e7;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid var(--jaune-fvt);">
-                            <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
-                                <i class="fas fa-star" style="color:var(--jaune-fvt);"></i> 
-                                <strong>Critères de notation :</strong> Pertinence et cohérence technique — 40 points sur 100 (grille de présélection)
-                            </p>
-                        </div>
+    <!-- ÉTAPE 3 : PROBLÉMATIQUE ET OBJECTIFS ET ALIGNEMENT STRATEGIQUE -->
+    
+    <div style="background:#fff8e7;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid var(--jaune-fvt);">
+        <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
+            <i class="fas fa-star" style="color:var(--jaune-fvt);"></i> 
+            <strong>Critères de notation :</strong> Pertinence et cohérence technique — 40 points sur 100 (grille de présélection, point 11 du manuel)
+        </p>
+    </div>
 
-                        <!-- Problématique -->
-                        <div class="form-group">
-                            <label for="problematique">Problématique et justification <span class="required">*</span></label>
-                            <textarea id="problematique" name="problematique" rows="4" 
-                                      placeholder="Décrivez la problématique et justifiez le projet..." required><?php echo esc_textarea($current_data['problematique'] ?? ''); ?></textarea>
-                        </div>
+    <!-- Problématique et justification -->
+    <div class="form-group">
+        <label for="problematique">Problématique et justification <span class="required">*</span></label>
+        <textarea id="problematique" name="problematique" rows="4" 
+                  placeholder="Décrivez la problématique et justifiez le projet..." required><?php echo esc_textarea($current_data['problematique'] ?? ''); ?></textarea>
+        <span class="helper">Contexte, enjeux, défi à relever et justification du projet</span>
+    </div>
 
-                        <!-- Objectifs -->
-                        <div class="form-group">
-                            <label for="objectifs_resultats">Objectifs et résultats attendus <span class="required">*</span></label>
-                            <textarea id="objectifs_resultats" name="objectifs_resultats" rows="4" 
-                                      placeholder="Objectifs poursuivis et résultats escomptés..." required><?php echo esc_textarea($current_data['objectifs_resultats'] ?? ''); ?></textarea>
-                        </div>
+    <!-- Lien avec les priorités nationales -->
+    <div class="form-group">
+        <label for="lien_priorites">Lien avec les priorités nationales <span class="required">*</span></label>
+        <textarea id="lien_priorites" name="lien_priorites" rows="3" 
+                  placeholder="Alignement du projet avec la CDN, le PNA ou toute autre politique sectorielle pertinente..." required><?php echo esc_textarea($current_data['lien_priorites'] ?? ''); ?></textarea>
+        <span class="helper">Contribution Déterminée au niveau National (CDN), Plan National d'Adaptation (PNA) ou autre politique sectorielle</span>
+    </div>
 
-                        <!-- Bénéficiaires -->
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="beneficiaires_directs">Nombre de bénéficiaires directs estimés <span class="required">*</span></label>
-                                <input type="number" id="beneficiaires_directs" name="beneficiaires_directs" 
-                                       placeholder="Nombre de bénéficiaires directs" 
-                                       value="<?php echo esc_attr($current_data['beneficiaires_directs'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="beneficiaires_indirects">Nombre de bénéficiaires indirects estimés <span class="required">*</span></label>
-                                <input type="number" id="beneficiaires_indirects" name="beneficiaires_indirects" 
-                                       placeholder="Nombre de bénéficiaires indirects" 
-                                       value="<?php echo esc_attr($current_data['beneficiaires_indirects'] ?? ''); ?>" required>
-                            </div>
-                        </div>
+    <!-- Objectifs et résultats attendus -->
+    <div class="form-group">
+        <label for="objectifs_resultats">Objectifs et résultats attendus <span class="required">*</span></label>
+        <textarea id="objectifs_resultats" name="objectifs_resultats" rows="4" 
+                  placeholder="Objectifs poursuivis et résultats escomptés..." required><?php echo esc_textarea($current_data['objectifs_resultats'] ?? ''); ?></textarea>
+        <span class="helper">Objectifs généraux et spécifiques, résultats attendus</span>
+    </div>
 
-                        <div class="form-group">
-                            <label for="caracteristiques_cibles">Caractéristiques des groupes cibles <span class="required">*</span></label>
-                            <textarea id="caracteristiques_cibles" name="caracteristiques_cibles" rows="3" 
-                                      placeholder="Description des groupes cibles (âge, genre, activité, vulnérabilités...)" required><?php echo esc_textarea($current_data['caracteristiques_cibles'] ?? ''); ?></textarea>
-                        </div>
+    <!-- Théorie du changement -->
+    <div class="form-group">
+        <label for="theorie_changement">Théorie du changement <span class="required">*</span></label>
+        <textarea id="theorie_changement" name="theorie_changement" rows="4" 
+                  placeholder="Enchaînement logique entre les activités envisagées, les résultats attendus et l'objectif poursuivi..." required><?php echo esc_textarea($current_data['theorie_changement'] ?? ''); ?></textarea>
+        <span class="helper">Comment le projet compte produire le changement visé</span>
+    </div>
 
-                        <div class="form-group">
-                            <label for="impacts_attendus">Impacts attendus <span class="required">*</span></label>
-                            <textarea id="impacts_attendus" name="impacts_attendus" rows="3" 
-                                      placeholder="Impact attendus" required><?php echo esc_textarea($current_data['impacts_attendus'] ?? ''); ?></textarea>
-                        </div>
+    <!-- Impact environnemental et climatique attendu -->
+    <div class="form-group">
+        <label for="impact_attendu">Impact environnemental et climatique attendu <span class="required">*</span></label>
+        <textarea id="impact_attendu" name="impact_attendu" rows="3" 
+                  placeholder="Estimation des effets attendus sur l'environnement et/ou le climat..." required><?php echo esc_textarea($current_data['impact_attendu'] ?? ''); ?></textarea>
+        <span class="helper">Ex: émissions de GES évitées ou séquestrées, superficies restaurées ou protégées, personnes rendues plus résilientes, etc.</span>
+    </div>
 
                     <?php elseif ($current_step === 4) : ?>
-                        <!-- ÉTAPE 4 : MISE EN ŒUVRE ET FINANCEMENT -->
-                        
-                        <div style="background:#e8f0fe;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid #1a73e8;">
-                            <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
-                                <i class="fas fa-info-circle" style="color:#1a73e8;"></i> 
-                                <strong>Information :</strong> Le montant sollicité détermine la catégorie de financement et le niveau d'instruction applicable.
-                            </p>
-                        </div>
+    <!-- ÉTAPE 4 : BÉNÉFICIAIRES ET INCLUSION -->
+    
+    <div style="background:#e8f0fe;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid #1a73e8;">
+        <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
+            <i class="fas fa-users" style="color:#1a73e8;"></i> 
+            <strong>Critères de notation :</strong> Bénéficiaires et ancrage local — 15 points sur 100 (grille de présélection, point 11 du manuel)
+        </p>
+    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="date_demarrage">Date de démarrage prévisionnelle <span class="required">*</span></label>
-                                <input type="date" id="date_demarrage" name="date_demarrage" 
-                                       value="<?php echo esc_attr($current_data['date_demarrage'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="duree_mois">Durée envisagée (en mois) <span class="required">*</span></label>
-                                <input type="number" id="duree_mois" name="duree_mois" 
-                                       placeholder="Durée en mois" 
-                                       value="<?php echo esc_attr($current_data['duree_mois'] ?? ''); ?>" required>
-                            </div>
-                        </div>
+    <!-- Bénéficiaires -->
+    <div class="form-row">
+        <div class="form-group">
+            <label for="beneficiaires_directs">Nombre de bénéficiaires directs estimés <span class="required">*</span></label>
+            <input type="number" id="beneficiaires_directs" name="beneficiaires_directs" 
+                   placeholder="Nombre de bénéficiaires directs" 
+                   value="<?php echo esc_attr($current_data['beneficiaires_directs'] ?? ''); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="beneficiaires_indirects">Nombre de bénéficiaires indirects estimés <span class="required">*</span></label>
+            <input type="number" id="beneficiaires_indirects" name="beneficiaires_indirects" 
+                   placeholder="Nombre de bénéficiaires indirects" 
+                   value="<?php echo esc_attr($current_data['beneficiaires_indirects'] ?? ''); ?>" required>
+        </div>
+    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="cout_global">Coût global estimatif (FCFA) <span class="required">*</span></label>
-                                <input type="number" id="cout_global" name="cout_global" 
-                                       placeholder="Coût total du projet en FCFA" 
-                                       value="<?php echo esc_attr($current_data['cout_global'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="montant_sollicite">Montant sollicité auprès du TGF (FCFA) <span class="required">*</span></label>
-                                <input type="number" id="montant_sollicite" name="montant_sollicite" 
-                                       placeholder="Montant demandé au TGF" 
-                                       value="<?php echo esc_attr($current_data['montant_sollicite'] ?? ''); ?>" required>
-                            </div>
-                        </div>
+    <!-- Caractéristiques des groupes cibles -->
+    <div class="form-group">
+        <label for="caracteristiques_cibles">Caractéristiques des groupes cibles <span class="required">*</span></label>
+        <textarea id="caracteristiques_cibles" name="caracteristiques_cibles" rows="3" 
+                  placeholder="Description des groupes cibles (âge, genre, activité, vulnérabilités...)" required><?php echo esc_textarea($current_data['caracteristiques_cibles'] ?? ''); ?></textarea>
+    </div>
 
-                        <!-- Catégorie de financement -->
-                        <div class="form-group">
-                            <label>Catégorie de financement</label>
-                            <div class="radio-grid">
-                                <?php foreach ($categories_financement as $categorie) : ?>
-                                <div class="form-radio">
-                                    <input type="radio" id="categorie_<?php echo sanitize_title($categorie); ?>" 
-                                           name="categorie_financement" value="<?php echo esc_attr($categorie); ?>"
-                                           <?php checked($current_data['categorie_financement'] ?? '', $categorie); ?>>
-                                    <label for="categorie_<?php echo sanitize_title($categorie); ?>"><?php echo esc_html($categorie); ?></label>
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
+    <!-- Implication des collectivités et communautés -->
+    <div class="form-group">
+        <label for="implication_communautes">Implication des collectivités et communautés <span class="required">*</span></label>
+        <textarea id="implication_communautes" name="implication_communautes" rows="3" 
+                  placeholder="Modalités de consultation ou de participation des collectivités territoriales et des communautés concernées dans la conception du projet..." required><?php echo esc_textarea($current_data['implication_communautes'] ?? ''); ?></textarea>
+    </div>
 
-                        <!-- Fiche de budget -->
-                        <div class="form-group">
-                            <label for="fichier_budget">Fiche de budget (préalablement rempli)</label>
-                            <div class="upload-item" id="upload-budget">
-                                <input type="file" id="fichier_budget" name="fichier_budget" 
-                                       accept=".pdf,.doc,.docx,.zip"
-                                       onchange="updateFileName(this, 'budget-file-name', 'upload-budget')">
-                                <span id="budget-file-name" class="file-name-display">
-                                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                </span>
-                                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                <?php if (!empty($current_data['fichier_budget_nom'])) : ?>
-                                    <span class="file-uploaded">
-                                        <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_budget_nom']); ?>
-                                    </span>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="autres_sources">Autres sources de financement envisagées</label>
-                            <textarea id="autres_sources" name="autres_sources" rows="2" 
-                                      placeholder="Nom du partenaire et montant, le cas échéant."><?php echo esc_textarea($current_data['autres_sources'] ?? ''); ?></textarea>
-                            <span class="helper">Nom du partenaire et montant, le cas échéant.</span>
-                        </div>
+    <!-- Prise en compte du genre -->
+    <div class="form-group">
+        <label for="prise_compte_genre">Prise en compte du genre <span class="required">*</span></label>
+        <textarea id="prise_compte_genre" name="prise_compte_genre" rows="3" 
+                  placeholder="Participation des femmes et des jeunes aux instances de décision du projet, accès équitable aux bénéfices générés et mesures spécifiques envisagées..." required><?php echo esc_textarea($current_data['prise_compte_genre'] ?? ''); ?></textarea>
+    </div>
 
                     <?php elseif ($current_step === 5) : ?>
-                        <!-- ÉTAPE 5 : VÉRIFICATION ET SOUMISSION -->
-                        
-                        <div style="background:#f0f7f3;border-radius:12px;padding:20px;margin-bottom:20px;border:2px solid var(--vert-fvt);">
-                            <p style="font-family:'Kumbh Sans',sans-serif;color:var(--vert-fvt-fonce);margin:0;text-align:center;">
-                                <i class="fas fa-check-circle" style="color:var(--vert-fvt);font-size:24px;display:block;margin-bottom:8px;"></i>
-                                <strong>Vérifiez toutes vos informations avant la validation définitive.</strong>
-                            </p>
-                        </div>
+    <!-- ÉTAPE 5 : DURABILITÉ ET MAÎTRISE DES RISQUES -->
+    
+    <div style="background:#e8f0fe;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid #1a73e8;">
+        <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
+            <i class="fas fa-shield-alt" style="color:#1a73e8;"></i> 
+            <strong>Critères de notation :</strong> Durabilité et effet catalyseur — 15 points sur 100 (grille de présélection, point 11 du manuel)
+        </p>
+    </div>
 
-                        <!-- Résumé des données -->
-                        <?php 
-                        $all_data = array();
-                        for ($i = 1; $i <= 4; $i++) {
-                            if (isset($form_data[$i])) {
-                                $all_data = array_merge($all_data, $form_data[$i]);
-                            }
-                        }
-                        ?>
-                        <div class="summary-grid">
-                            <div class="summary-card">
-                                <h4>1. Porteur de projet</h4>
-                                <p><span class="label">Type</span> <?php echo esc_html($all_data['type_porteur'] ?? 'Non renseigné'); ?></p>
-                                <p><span class="label">Responsable</span> <?php echo esc_html($all_data['nom_responsable'] ?? '') . ' (' . esc_html($all_data['fonction_responsable'] ?? '') . ')'; ?></p>
-                                <p><span class="label">Contact</span> <?php echo esc_html($all_data['telephone'] ?? '') . ' - ' . esc_html($all_data['email'] ?? ''); ?></p>
-                                <p><span class="label">Adresse</span> <?php echo esc_html(substr($all_data['adresse'] ?? '', 0, 50)) . '...'; ?></p>
-                            </div>
-                            <div class="summary-card">
-                                <h4>2. Identification du projet</h4>
-                                <p><span class="label">Guichet</span> <?php echo esc_html($all_data['guichet'] ?? 'Non renseigné'); ?></p>
-                                <p><span class="label">Titre</span> <?php echo esc_html($all_data['titre_projet'] ?? ''); ?></p>
-                                <p><span class="label">Localisation</span> <?php echo esc_html($all_data['region'] ?? '') . ' - ' . esc_html($all_data['prefecture'] ?? '') . ' - ' . esc_html($all_data['commune'] ?? ''); ?></p>
-                            </div>
-                            <div class="summary-card">
-                                <h4>3. Problématique & Objectifs</h4>
-                                <p><span class="label">Problématique</span> <?php echo esc_html(substr($all_data['problematique'] ?? '', 0, 60)) . '...'; ?></p>
-                                <p><span class="label">Bénéficiaires directs</span> <?php echo esc_html($all_data['beneficiaires_directs'] ?? '0'); ?></p>
-                                <p><span class="label">Bénéficiaires indirects</span> <?php echo esc_html($all_data['beneficiaires_indirects'] ?? '0'); ?></p>
-                            </div>
-                            <div class="summary-card">
-                                <h4>4. Mise en œuvre & Financement</h4>
-                                <p><span class="label">Coût global</span> <?php echo number_format(intval($all_data['cout_global'] ?? 0), 0, ',', ' ') . ' FCFA'; ?></p>
-                                <p><span class="label">Montant sollicité</span> <?php echo number_format(intval($all_data['montant_sollicite'] ?? 0), 0, ',', ' ') . ' FCFA'; ?></p>
-                                <p><span class="label">Durée</span> <?php echo esc_html($all_data['duree_mois'] ?? '0') . ' mois'; ?></p>
-                                <p><span class="label">Catégorie</span> <?php echo esc_html($all_data['categorie_financement'] ?? 'Non définie'); ?></p>
-                            </div>
-                        </div>
+    <!-- Pérennité et caractère innovant -->
+    <div class="form-group">
+        <label for="perennite_innovant">Pérennité et caractère innovant <span class="required">*</span></label>
+        <textarea id="perennite_innovant" name="perennite_innovant" rows="4" 
+                  placeholder="Modalités envisagées pour assurer la continuité des résultats après la fin du financement du TGF ; éléments d'innovation ou d'additionnalité du projet par rapport à l'existant..." required><?php echo esc_textarea($current_data['perennite_innovant'] ?? ''); ?></textarea>
+    </div>
 
-                        <!-- Commentaire optionnel -->
-                        <div class="form-group">
-                            <label for="commentaire">Commentaire additionnel</label>
-                            <textarea id="commentaire" name="commentaire" rows="2" 
-                                      placeholder="Informations complémentaires éventuelles..."><?php echo esc_textarea($current_data['commentaire'] ?? ''); ?></textarea>
-                        </div>
+    <!-- Risques environnementaux et sociaux préliminaires -->
+    <div class="form-group">
+        <label for="risques_environnementaux">Risques environnementaux et sociaux préliminaires <span class="required">*</span></label>
+        <textarea id="risques_environnementaux" name="risques_environnementaux" rows="4" 
+                  placeholder="Identification sommaire des risques environnementaux et sociaux potentiels du projet et mesures d'atténuation envisagées..." required><?php echo esc_textarea($current_data['risques_environnementaux'] ?? ''); ?></textarea>
+        <span class="helper">Ex: déplacement de populations, zone protégée, ressources en eau partagées</span>
+    </div>
 
-                        <!-- Pièces jointes Étape 5 -->
-                        <div class="form-group">
-                            <label>Pièces jointes complémentaires</label>
-                            <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
-                                
-                                <div class="upload-item" id="upload-fiscal">
-                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de régularité fiscale</label>
-                                    <input type="file" id="fichier_fiscal" name="fichier_fiscal" 
-                                           accept=".pdf,.doc,.docx,.zip"
-                                           onchange="updateFileName(this, 'fiscal-file-name', 'upload-fiscal')">
-                                    <span id="fiscal-file-name" class="file-name-display">
-                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                    </span>
-                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                </div>
+                    <?php elseif ($current_step === 6) : ?>
+    <!-- ÉTAPE 6 : MISE EN ŒUVRE ET FINANCEMENT -->
+    
+    <div style="background:#e8f0fe;border-radius:12px;padding:12px 16px;margin-bottom:20px;border-left:4px solid #1a73e8;">
+        <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
+            <i class="fas fa-info-circle" style="color:#1a73e8;"></i> 
+            <strong>Information :</strong> Le montant sollicité détermine la catégorie de financement et le niveau d'instruction applicable.
+        </p>
+    </div>
 
-                                <div class="upload-item" id="upload-non-faillite">
-                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de non-faillite</label>
-                                    <input type="file" id="fichier_non_faillite" name="fichier_non_faillite" 
-                                           accept=".pdf,.doc,.docx,.zip"
-                                           onchange="updateFileName(this, 'non-faillite-file-name', 'upload-non-faillite')">
-                                    <span id="non-faillite-file-name" class="file-name-display">
-                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                    </span>
-                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="date_demarrage">Date de démarrage prévisionnelle <span class="required">*</span></label>
+            <input type="date" id="date_demarrage" name="date_demarrage" 
+                   value="<?php echo esc_attr($current_data['date_demarrage'] ?? ''); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="duree_mois">Durée envisagée (en mois) <span class="required">*</span></label>
+            <input type="number" id="duree_mois" name="duree_mois" 
+                   placeholder="Durée en mois" 
+                   value="<?php echo esc_attr($current_data['duree_mois'] ?? ''); ?>" required>
+        </div>
+    </div>
 
-                                <div class="upload-item" id="upload-capacite">
-                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de capacité financière</label>
-                                    <input type="file" id="fichier_capacite" name="fichier_capacite" 
-                                           accept=".pdf,.doc,.docx,.zip"
-                                           onchange="updateFileName(this, 'capacite-file-name', 'upload-capacite')">
-                                    <span id="capacite-file-name" class="file-name-display">
-                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                    </span>
-                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                </div>
+    <div class="form-row">
+        <div class="form-group">
+            <label for="cout_global">Coût global estimatif (FCFA) <span class="required">*</span></label>
+            <input type="number" id="cout_global" name="cout_global" 
+                   placeholder="Coût total du projet en FCFA" 
+                   value="<?php echo esc_attr($current_data['cout_global'] ?? ''); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="montant_sollicite">Montant sollicité auprès du TGF (FCFA) <span class="required">*</span></label>
+            <input type="number" id="montant_sollicite" name="montant_sollicite" 
+                   placeholder="Montant demandé au TGF" 
+                   value="<?php echo esc_attr($current_data['montant_sollicite'] ?? ''); ?>" required>
+        </div>
+    </div>
 
-                                <div class="upload-item" id="upload-registre">
-                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Extrait récent du registre du commerce ou document équivalent</label>
-                                    <input type="file" id="fichier_registre" name="fichier_registre" 
-                                           accept=".pdf,.doc,.docx,.zip"
-                                           onchange="updateFileName(this, 'registre-file-name', 'upload-registre')">
-                                    <span id="registre-file-name" class="file-name-display">
-                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                    </span>
-                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                </div>
+    <!-- Catégorie de financement -->
+    <div class="form-group">
+        <label>Catégorie de financement</label>
+        <div class="radio-grid">
+            <?php foreach ($categories_financement as $categorie) : ?>
+            <div class="form-radio">
+                <input type="radio" id="categorie_<?php echo sanitize_title($categorie); ?>" 
+                       name="categorie_financement" value="<?php echo esc_attr($categorie); ?>"
+                       <?php checked($current_data['categorie_financement'] ?? '', $categorie); ?>>
+                <label for="categorie_<?php echo sanitize_title($categorie); ?>"><?php echo esc_html($categorie); ?></label>
+            </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
-                                <div class="upload-item" id="upload-budget-previsionnel">
-                                    <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Budget prévisionnel détaillé par composante et/ou activité</label>
-                                    <input type="file" id="fichier_budget_previsionnel" name="fichier_budget_previsionnel" 
-                                           accept=".pdf,.doc,.docx,.zip"
-                                           onchange="updateFileName(this, 'budget-previsionnel-file-name', 'upload-budget-previsionnel')">
-                                    <span id="budget-previsionnel-file-name" class="file-name-display">
-                                        <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
-                                    </span>
-                                    <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
-                                </div>
+    <!-- Fiche de budget -->
+    <div class="form-group">
+        <label for="fichier_budget">Fiche de budget (préalablement rempli)</label>
+        <div class="upload-item" id="upload-budget">
+            <input type="file" id="fichier_budget" name="fichier_budget" 
+                   accept=".pdf,.doc,.docx,.zip"
+                   onchange="updateFileName(this, 'budget-file-name', 'upload-budget')">
+            <span id="budget-file-name" class="file-name-display">
+                <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+            </span>
+            <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            <?php if (!empty($current_data['fichier_budget_nom'])) : ?>
+                <span class="file-uploaded">
+                    <i class="fas fa-check-circle"></i> <?php echo esc_html($current_data['fichier_budget_nom']); ?>
+                </span>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                            </div>
-                        </div>
+    <div class="form-group">
+        <label for="autres_sources">Autres sources de financement envisagées</label>
+        <textarea id="autres_sources" name="autres_sources" rows="2" 
+                  placeholder="Nom du partenaire et montant, le cas échéant."><?php echo esc_textarea($current_data['autres_sources'] ?? ''); ?></textarea>
+        <span class="helper">Nom du partenaire et montant, le cas échéant.</span>
+    </div>
 
-                        <!-- Déclaration -->
-                        <div class="form-check" style="background:#fff8e7;border-color:var(--jaune-fvt);">
-                            <input type="checkbox" id="declaration" name="declaration" required>
-                            <label for="declaration">
-                                <strong>☐ Je certifie l'exactitude des informations fournies</strong> dans la présente note conceptuelle et déclare que le porteur de projet remplit les conditions générales d'éligibilité prévues au point 7.3 du Manuel de sélection des projets TGF (existence légale, capacités de gestion, absence de mesure d'exclusion en cours). <span class="required">*</span>
-                            </label>
-                        </div>
+                    <?php elseif ($current_step === 7) : ?>
+    <!-- ÉTAPE 7 : VÉRIFICATION ET SOUMISSION -->
+    
+    <div style="background:#f0f7f3;border-radius:12px;padding:20px;margin-bottom:20px;border:2px solid var(--vert-fvt);">
+        <p style="font-family:'Kumbh Sans',sans-serif;color:var(--vert-fvt-fonce);margin:0;text-align:center;">
+            <i class="fas fa-check-circle" style="color:var(--vert-fvt);font-size:24px;display:block;margin-bottom:8px;"></i>
+            <strong>Vérifiez toutes vos informations avant la validation définitive.</strong>
+        </p>
+    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="fait_a">Fait à <span class="required">*</span></label>
-                                <input type="text" id="fait_a" name="fait_a" 
-                                       placeholder="Lieu de signature" 
-                                       value="<?php echo esc_attr($current_data['fait_a'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="date_signature">Le (date) <span class="required">*</span></label>
-                                <input type="date" id="date_signature" name="date_signature" 
-                                       value="<?php echo esc_attr($current_data['date_signature'] ?? ''); ?>" required>
-                            </div>
-                        </div>
+    <!-- Résumé des données -->
+    <?php 
+    $all_data = array();
+    for ($i = 1; $i <= 6; $i++) {
+        if (isset($form_data[$i])) {
+            $all_data = array_merge($all_data, $form_data[$i]);
+        }
+    }
+    ?>
+    <div class="summary-grid">
+        <div class="summary-card">
+            <h4>1. Porteur de projet</h4>
+            <p><span class="label">Type</span> <?php echo esc_html($all_data['type_porteur'] ?? 'Non renseigné'); ?></p>
+            <p><span class="label">Responsable</span> <?php echo esc_html($all_data['nom_responsable'] ?? '') . ' (' . esc_html($all_data['fonction_responsable'] ?? '') . ')'; ?></p>
+            <p><span class="label">Contact</span> <?php echo esc_html($all_data['telephone'] ?? '') . ' - ' . esc_html($all_data['email'] ?? ''); ?></p>
+        </div>
+        <div class="summary-card">
+            <h4>2. Identification du projet</h4>
+            <p><span class="label">Guichet</span> <?php echo esc_html($all_data['guichet'] ?? 'Non renseigné'); ?></p>
+            <p><span class="label">Titre</span> <?php echo esc_html($all_data['titre_projet'] ?? ''); ?></p>
+            <p><span class="label">Localisation</span> <?php echo esc_html($all_data['region'] ?? '') . ' - ' . esc_html($all_data['prefecture'] ?? '') . ' - ' . esc_html($all_data['commune'] ?? ''); ?></p>
+        </div>
+        <div class="summary-card">
+            <h4>3. Problématique & Objectifs</h4>
+            <p><span class="label">Problématique</span> <?php echo esc_html(substr($all_data['problematique'] ?? '', 0, 60)) . '...'; ?></p>
+            <p><span class="label">Lien priorités</span> <?php echo esc_html(substr($all_data['lien_priorites'] ?? '', 0, 60)) . '...'; ?></p>
+        </div>
+        <div class="summary-card">
+            <h4>4. Bénéficiaires & Inclusion</h4>
+            <p><span class="label">Bénéficiaires directs</span> <?php echo esc_html($all_data['beneficiaires_directs'] ?? '0'); ?></p>
+            <p><span class="label">Bénéficiaires indirects</span> <?php echo esc_html($all_data['beneficiaires_indirects'] ?? '0'); ?></p>
+        </div>
+        <div class="summary-card">
+            <h4>5. Durabilité & Risques</h4>
+            <p><span class="label">Pérennité</span> <?php echo esc_html(substr($all_data['perennite_innovant'] ?? '', 0, 60)) . '...'; ?></p>
+        </div>
+        <div class="summary-card">
+            <h4>6. Mise en œuvre & Financement</h4>
+            <p><span class="label">Coût global</span> <?php echo number_format(intval($all_data['cout_global'] ?? 0), 0, ',', ' ') . ' FCFA'; ?></p>
+            <p><span class="label">Montant sollicité</span> <?php echo number_format(intval($all_data['montant_sollicite'] ?? 0), 0, ',', ' ') . ' FCFA'; ?></p>
+            <p><span class="label">Durée</span> <?php echo esc_html($all_data['duree_mois'] ?? '0') . ' mois'; ?></p>
+        </div>
+    </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="signature_nom">Nom du responsable habilité <span class="required">*</span></label>
-                                <input type="text" id="signature_nom" name="signature_nom" 
-                                       placeholder="Nom du signataire" 
-                                       value="<?php echo esc_attr($current_data['signature_nom'] ?? ''); ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="signature_qualite">Qualité du signataire <span class="required">*</span></label>
-                                <input type="text" id="signature_qualite" name="signature_qualite" 
-                                       placeholder="Fonction / qualité" 
-                                       value="<?php echo esc_attr($current_data['signature_qualite'] ?? ''); ?>" required>
-                            </div>
-                        </div>
+    <!-- Commentaire optionnel -->
+    <div class="form-group">
+        <label for="commentaire">Commentaire additionnel</label>
+        <textarea id="commentaire" name="commentaire" rows="2" 
+                  placeholder="Informations complémentaires éventuelles..."><?php echo esc_textarea($current_data['commentaire'] ?? ''); ?></textarea>
+    </div>
 
-                        <div style="background:#f0f7f3;border-radius:12px;padding:16px;margin-top:16px;border:1px solid #dce8e0;">
-                            <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
-                                <i class="fas fa-info-circle" style="color:var(--vert-fvt);"></i>
-                                <em>Ce document est déposé selon les modalités précisées par l'appel à projets en cours. Un accusé de réception mentionnant la date de dépôt et un numéro d'identification unique vous sera délivré (point 8 du manuel).</em>
-                            </p>
-                        </div>
+    <!-- Pièces jointes Étape 7 -->
+    <div class="form-group">
+        <label>Pièces jointes complémentaires</label>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:8px;">
+            
+            <div class="upload-item" id="upload-fiscal">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de régularité fiscale</label>
+                <input type="file" id="fichier_fiscal" name="fichier_fiscal" 
+                       accept=".pdf,.doc,.docx,.zip"
+                       onchange="updateFileName(this, 'fiscal-file-name', 'upload-fiscal')">
+                <span id="fiscal-file-name" class="file-name-display">
+                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                </span>
+                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            </div>
 
-                        <input type="hidden" name="submit_final" value="1">
+            <div class="upload-item" id="upload-non-faillite">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de non-faillite</label>
+                <input type="file" id="fichier_non_faillite" name="fichier_non_faillite" 
+                       accept=".pdf,.doc,.docx,.zip"
+                       onchange="updateFileName(this, 'non-faillite-file-name', 'upload-non-faillite')">
+                <span id="non-faillite-file-name" class="file-name-display">
+                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                </span>
+                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            </div>
+
+            <div class="upload-item" id="upload-capacite">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Attestation de capacité financière</label>
+                <input type="file" id="fichier_capacite" name="fichier_capacite" 
+                       accept=".pdf,.doc,.docx,.zip"
+                       onchange="updateFileName(this, 'capacite-file-name', 'upload-capacite')">
+                <span id="capacite-file-name" class="file-name-display">
+                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                </span>
+                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            </div>
+
+            <div class="upload-item" id="upload-registre">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Extrait récent du registre du commerce ou document équivalent</label>
+                <input type="file" id="fichier_registre" name="fichier_registre" 
+                       accept=".pdf,.doc,.docx,.zip"
+                       onchange="updateFileName(this, 'registre-file-name', 'upload-registre')">
+                <span id="registre-file-name" class="file-name-display">
+                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                </span>
+                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            </div>
+
+            <div class="upload-item" id="upload-budget-previsionnel">
+                <label style="font-weight:500;font-size:0.85rem;display:block;margin-bottom:4px;">Budget prévisionnel détaillé par composante et/ou activité</label>
+                <input type="file" id="fichier_budget_previsionnel" name="fichier_budget_previsionnel" 
+                       accept=".pdf,.doc,.docx,.zip"
+                       onchange="updateFileName(this, 'budget-previsionnel-file-name', 'upload-budget-previsionnel')">
+                <span id="budget-previsionnel-file-name" class="file-name-display">
+                    <i class="fas fa-paperclip"></i> Aucun fichier sélectionné
+                </span>
+                <span class="helper"><i class="fas fa-file-archive"></i> PDF, DOC, DOCX, ZIP — Max 10 Mo</span>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Déclaration -->
+    <div class="form-check" style="background:#fff8e7;border-color:var(--jaune-fvt);">
+        <input type="checkbox" id="declaration" name="declaration" required>
+        <label for="declaration">
+            <strong>☐ Je certifie l'exactitude des informations fournies</strong> dans la présente note conceptuelle et déclare que le porteur de projet remplit les conditions générales d'éligibilité prévues au point 7.3 du Manuel de sélection des projets TGF (existence légale, capacités de gestion, absence de mesure d'exclusion en cours). <span class="required">*</span>
+        </label>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="fait_a">Fait à <span class="required">*</span></label>
+            <input type="text" id="fait_a" name="fait_a" 
+                   placeholder="Lieu de signature" 
+                   value="<?php echo esc_attr($current_data['fait_a'] ?? ''); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="date_signature">Le (date) <span class="required">*</span></label>
+            <input type="date" id="date_signature" name="date_signature" 
+                   value="<?php echo esc_attr($current_data['date_signature'] ?? ''); ?>" required>
+        </div>
+    </div>
+
+    <div class="form-row">
+        <div class="form-group">
+            <label for="signature_nom">Nom du responsable habilité <span class="required">*</span></label>
+            <input type="text" id="signature_nom" name="signature_nom" 
+                   placeholder="Nom du signataire" 
+                   value="<?php echo esc_attr($current_data['signature_nom'] ?? ''); ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="signature_qualite">Qualité du signataire <span class="required">*</span></label>
+            <input type="text" id="signature_qualite" name="signature_qualite" 
+                   placeholder="Fonction / qualité" 
+                   value="<?php echo esc_attr($current_data['signature_qualite'] ?? ''); ?>" required>
+        </div>
+    </div>
+
+    <div style="background:#f0f7f3;border-radius:12px;padding:16px;margin-top:16px;border:1px solid #dce8e0;">
+        <p style="font-family:'Kumbh Sans',sans-serif;font-size:0.85rem;color:#5a6a5f;margin:0;">
+            <i class="fas fa-info-circle" style="color:var(--vert-fvt);"></i>
+            <em>Ce document est déposé selon les modalités précisées par l'appel à projets en cours. Un accusé de réception mentionnant la date de dépôt et un numéro d'identification unique vous sera délivré (point 8 du manuel).</em>
+        </p>
+    </div>
+
+    <input type="hidden" name="submit_final" value="1">
 
                     <?php endif; ?>
 
@@ -1627,7 +1733,7 @@ $success_ref = isset($_GET['soumission_success']) ? sanitize_text_field($_GET['s
                             <?php endif; ?>
                         </div>
                         <div class="btn-group">
-                            <?php if ($current_step < 5) : ?>
+                            <?php if ($current_step < 7) : ?>
                                 <button type="submit" class="btn-step btn-step--primary">
                                     Suivant <i class="fas fa-arrow-right"></i>
                                 </button>
